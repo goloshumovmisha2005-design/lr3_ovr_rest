@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Меню</h2>
+<div class="categories">
+    <a href="{{ url_for('menu') }}" class="{% if not selected_cat %}active{% endif %}">Все</a>
+    {% for cat in categories %}
+        <a href="{{ url_for('menu', cat=cat.id) }}" class="{% if selected_cat == cat.id|string %}active{% endif %}">{{ cat.name }}</a>
+    {% endfor %}
+</div>
+<input type="text" id="menuSearch" placeholder="Поиск блюда...">
+
+<div class="dishes" id="dishesContainer">
+    {% for item in items %}
+    <div class="dish-outer">
+        <!-- Ссылка охватывает фото, название, описание, цену -->
+        <a href="{{ url_for('dish_detail', item_id=item.id) }}" class="dish-card">
+            <div class="dish-image">
+                {% if item.image %}
+                    {% if item.image.startswith('http') %}
+                        <img src="{{ item.image }}" alt="{{ item.name }}">
+                    {% else %}
+                        <img src="{{ url_for('static', filename=item.image) }}" alt="{{ item.name }}">
+                    {% endif %}
+                {% else %}
+                    <img src="{{ url_for('static', filename='images/default_food.jpg') }}" alt="Нет фото">
+                {% endif %}
+            </div>
+            <div class="dish-info">
+                <h3>{{ item.name }}</h3>
+                <p class="desc">{{ item.description }}</p>
+                <p class="price"><strong>{{ item.price }} ₽</strong></p>
+            </div>
+        </a>
+        <!-- Форма добавления в корзину – не внутри ссылки -->
+        {% if current_user.is_authenticated %}
+        <form method="post" action="{{ url_for('add_to_cart') }}" class="add-to-cart">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+            <input type="hidden" name="item_id" value="{{ item.id }}">
+            <input type="number" name="quantity" value="1" min="1" placeholder="1">
+            <button type="submit">В корзину</button>
+        </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+document.getElementById('menuSearch').addEventListener('input', function(e) {
+    const filter = e.target.value.toLowerCase();
+    document.querySelectorAll('.dish-outer').forEach(outer => {
+        const name = outer.querySelector('h3').textContent.toLowerCase();
+        outer.style.display = name.includes(filter) ? '' : 'none';
+    });
+});
+</script>
+{% endblock %}

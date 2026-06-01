@@ -1,0 +1,38 @@
+{% extends "admin_base.html" %}
+{% block admin_content %}
+<h2>Пользователи</h2>
+<form method="POST" action="{{ url_for('admin_add_user') }}">
+    {{ form.hidden_tag() }}
+    <h4>Добавить пользователя</h4>
+    {{ form.first_name(placeholder="Имя") }}
+    {{ form.last_name(placeholder="Фамилия") }}
+    {{ form.phone(placeholder="Телефон") }}
+    {{ form.email(placeholder="Email") }}
+    {{ form.password(placeholder="Пароль") }}
+    {{ form.role() }}
+    {{ form.submit(class="btn") }}
+</form>
+<hr>
+<table>
+    <tr><th>ID</th><th>Имя</th><th>Телефон</th><th>Email</th><th>Роль</th><th>Бонусы</th><th>Действия</th></tr>
+    {% for u in users %}
+    <tr>
+        <td>{{ u.id }}</td>
+        <td>{{ u.first_name }} {{ u.last_name }}</td>
+        <td>{{ u.phone }}</td>
+        <td>{{ u.email }}</td>
+        <td>{{ u.role }}</td>
+        <td>{{ u.bonus_points }}</td>
+        <td>
+            <a href="{{ url_for('admin_edit_user', user_id=u.id) }}" class="btn btn-edit">✏️</a>
+            {% if u.role != 'admin' %}
+            <form method="POST" action="{{ url_for('admin_delete_user', user_id=u.id) }}" style="display:inline" onsubmit="return confirm('Удалить пользователя?')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+                <button type="submit" class="btn btn-delete">🗑️</button>
+            </form>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Оформление заказа</h2>
+<h3>Ваш заказ:</h3>
+<ul>
+  {% for id, qty in cart.items() %}
+  <li>{{ menu_names[id] }} – {{ qty }} шт. × {{ prices[id] }} ₽ = {{ prices[id]*qty }} ₽</li>
+  {% endfor %}
+</ul>
+<p>Сумма: <strong>{{ total }} ₽</strong></p>
+
+<form method="POST" id="checkout-form">
+  {{ form.hidden_tag() }}
+  <h3>Способ получения</h3>
+  {% for subfield in form.order_type %}
+    <label>{{ subfield }} {{ subfield.label }}</label>
+  {% endfor %}
+  <div id="address-block" style="display:none;">
+    {{ form.address_id.label }} {{ form.address_id }}
+    (или <a href="{{ url_for('profile') }}">добавьте новый</a>)
+  </div>
+
+  <h3>Способ оплаты</h3>
+  {% for subfield in form.payment_method %}
+    <label>{{ subfield }} {{ subfield.label }}</label>
+  {% endfor %}
+  {% if payment_methods %}
+  <p>Сохранённые карты: {% for pm in payment_methods %} <span>****{{ pm.card_number }}</span>{% endfor %}</p>
+  {% endif %}
+
+  <h3>Использовать бонусы</h3>
+  <p>У вас {{ current_user.bonus_points }} бонусов (1 бонус = 1 ₽, до 50% заказа)</p>
+  {{ form.bonus_used.label }} {{ form.bonus_used(min=0, max=[current_user.bonus_points, (total*0.5)|int]|min) }}
+
+  <br><br>
+  {{ form.submit(class="big-btn") }}
+</form>
+
+<script>
+function toggleAddress() {
+    const type = document.querySelector('input[name="order_type"]:checked').value;
+    document.getElementById('address-block').style.display = type === 'delivery' ? 'block' : 'none';
+}
+document.querySelectorAll('input[name="order_type"]').forEach(r => r.addEventListener('change', toggleAddress));
+toggleAddress();
+</script>
+{% endblock %}

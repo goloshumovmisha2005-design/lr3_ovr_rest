@@ -1,0 +1,10 @@
+{% extends "admin_base.html" %}
+{% block admin_content %}
+<h2>Панель управления</h2>
+<div class="stats">
+    <div class="stat-card"><span>Пользователей:</span><strong>{{ stats.users }}</strong></div>
+    <div class="stat-card"><span>Заказов:</span><strong>{{ stats.orders }}</strong></div>
+    <div class="stat-card"><span>Активных броней:</span><strong>{{ stats.reservations }}</strong></div>
+    <div class="stat-card"><span>Блюд в меню:</span><strong>{{ stats.menu_items }}</strong></div>
+</div>
+{% endblock %}

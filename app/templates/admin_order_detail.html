@@ -1,0 +1,60 @@
+{% extends "admin_base.html" %}
+{% block admin_content %}
+<h2>Заказ №{{ order.id }}</h2>
+<p>Пользователь: {{ order.first_name }} {{ order.last_name }}</p>
+<p>Тип: {{ order.order_type }}, Статус:
+    {% if order.status == 'created' %}Создан
+    {% elif order.status == 'paid' %}Оплачен
+    {% elif order.status == 'in_progress' %}В работе
+    {% elif order.status == 'completed' %}Завершён
+    {% elif order.status == 'cancelled' %}Отменён
+    {% else %}{{ order.status }}{% endif %}
+</p>
+<form method="POST" action="{{ url_for('admin_order_detail', order_id=order.id) }}">
+    {{ status_form.hidden_tag() }}
+    {{ status_form.status() }}
+    {{ status_form.submit(class="btn") }}
+</form>
+<hr>
+<h3>Позиции заказа</h3>
+<table>
+    <tr><th>Фото</th><th>Блюдо</th><th>Кол-во</th><th>Цена</th><th>Сумма</th><th>Действия</th></tr>
+    {% for item in items %}
+    <tr>
+        <td>
+            {% if item.image %}
+                <img src="{{ url_for('static', filename=item.image) if not item.image.startswith('http') else item.image }}" width="40" height="40" style="object-fit:cover; border-radius:4px;">
+            {% endif %}
+        </td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.price }} ₽</td>
+        <td>{{ item.quantity * item.price }} ₽</td>
+        <td>
+            <form method="POST" action="{{ url_for('admin_order_detail', order_id=order.id) }}" style="display:inline">
+                {{ items_form.hidden_tag() }}
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="update_item_id" value="{{ item.id }}">
+                <input type="number" name="new_quantity" value="{{ item.quantity }}" min="1" style="width:60px">
+                <button type="submit" class="btn">Изменить</button>
+            </form>
+            <form method="POST" action="{{ url_for('admin_order_detail', order_id=order.id) }}" style="display:inline">
+                {{ items_form.hidden_tag() }}
+                <input type="hidden" name="action" value="remove">
+                <input type="hidden" name="remove_item_id" value="{{ item.id }}">
+                <button type="submit" class="btn">Удалить</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+<h3>Добавить блюдо</h3>
+<form method="POST" action="{{ url_for('admin_order_detail', order_id=order.id) }}">
+    {{ items_form.hidden_tag() }}
+    <input type="hidden" name="action" value="add">
+    {{ items_form.menu_item_id() }}
+    <input type="number" name="quantity" value="1" min="1" style="width:60px">
+    <button type="submit" class="btn">Добавить</button>
+</form>
+<p><strong>Итого: {{ order.total_price }} ₽</strong></p>
+{% endblock %}

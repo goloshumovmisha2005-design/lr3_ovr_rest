@@ -1,0 +1,306 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title or 'Мяско' }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/font.css') }}">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    body {
+      background-color: #7e5b3b;
+    }
+    /* Внешний контейнер-обёртка для центрирования масштабируемого блока */
+    .scale-wrapper {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;   /* горизонтальное центрирование */
+      align-items: flex-start;   /* прижимаем к верху, чтобы не было пустоты */
+    }
+    /* Основной блок Pixso – точные размеры из макета */
+    .Pixso-frame-57_1046 {
+      width: 1920px;
+      height: 1080px;
+      position: relative;
+      flex-shrink: 0;
+      box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25) inset;
+      background-color: rgba(126, 91, 59, 1);
+      transform-origin: top left;
+    }
+    /* ========== ТОЧНЫЕ СТИЛИ ЭЛЕМЕНТОВ ИЗ МАКЕТА ========== */
+    .Pixso-rectangle-57_1047 {
+      width: 1920px;
+      height: 957.0427856445312px;
+      position: absolute;
+      left: 0px;
+      top: 0.4720458984375px;
+      filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    .Pixso-vector-57_1466 {
+      width: 3.34%;
+      height: 5.71%;
+      background-image: url("{{ url_for('static', filename='images/logout.png') }}");
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      position: absolute;
+      left: 96.66%;
+      right: 0%;
+      top: 1.32%;
+      bottom: 92.97%;
+      cursor: pointer;
+    }
+    .Pixso-vector-57_1468 {
+      width: 3.9%;
+      height: 5.71%;
+      background-image: url("{{ url_for('static', filename='images/account_circle.png') }}");
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      position: absolute;
+      left: 91.64%;
+      right: 4.46%;
+      top: 1.32%;
+      bottom: 92.97%;
+      cursor: pointer;
+    }
+    .Pixso-paragraph-57_1470 {
+      font-size: 48px;
+      font-family: "Volkhov-Italic";
+      font-weight: 400;
+      color: rgba(230, 159, 138, 1);
+      width: 188.7412109375px;
+      height: 46.37648010253906px;
+      position: absolute;
+      left: 1645.56494140625px;
+      top: 14.262939453125px;
+    }
+    .Pixso-vector-57_1471 {
+      width: 4.55%;
+      height: 5.07%;
+      background-image: url("{{ url_for('static', filename='images/add_shopping_cart.png') }}");
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      position: absolute;
+      left: 77.24%;
+      right: 18.21%;
+      top: 1.96%;
+      bottom: 92.97%;
+      cursor: pointer;
+    }
+    .Pixso-paragraph-57_1048,
+    .Pixso-paragraph-57_1049 {
+      font-size: 64px;
+      font-family: "Volkhov-Italic";
+      font-weight: 400;
+      color: rgba(219, 216, 193, 1);
+      width: 635.537109375px;
+      height: 78.51852416992188px;
+      position: absolute;
+      left: 737.43017578125px;
+      top: 14.97821044921875px;
+    }
+    .Pixso-vector-57_1050 {
+      width: 5.92%;
+      height: 8.27%;
+      background-image: url("{{ url_for('static', filename='images/list.png') }}");
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      position: absolute;
+      left: 0%;
+      right: 94.08%;
+      top: 0.04%;
+      bottom: 91.69%;
+      cursor: pointer;
+    }
+    .Pixso-vector-57_1052 {
+      width: 85.179931640625px;
+      height: 37.195404052734375px;
+      background-image: url("{{ url_for('static', filename='images/Boolean_operation_57_1052.png') }}");
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      position: absolute;
+      left: 14.196533203125px;
+      top: 26.067962646484375px;
+      cursor: pointer;
+    }
+    .Pixso-group-57_1065,
+    .Pixso-group-57_1068,
+    .Pixso-group-57_1071 {
+      width: 530px;
+      height: 774.617919921875px;
+      position: absolute;
+      top: 124.41091918945312px;
+      cursor: pointer;
+    }
+    .Pixso-group-57_1065 { left: 712.81103515625px; }
+    .Pixso-group-57_1068 { left: 86.5908203125px; }
+    .Pixso-group-57_1071 { left: 1312.129638671875px; }
+    .Pixso-rectangle-57_1066,
+    .Pixso-rectangle-57_1069,
+    .Pixso-rectangle-57_1072 {
+      width: 530px;
+      height: 774.617919921875px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+    .Pixso-paragraph-57_1067 {
+      font-size: 48px;
+      font-family: "Volkhov-Italic";
+      font-weight: 400;
+      text-align: center;
+      color: rgba(219, 216, 193, 1);
+      width: 354.9784851074219px;
+      height: 88.86309814453125px;
+      position: absolute;
+      left: 87.5107421875px;
+      top: 217.54690551757812px;
+    }
+    .Pixso-paragraph-57_1070 {
+      font-size: 48px;
+      font-family: "Volkhov-Italic";
+      font-weight: 400;
+      text-align: center;
+      color: rgba(219, 216, 193, 1);
+      width: 376.14453125px;
+      height: 88.86309814453125px;
+      position: absolute;
+      left: 91.59243774414062px;
+      top: 217.54690551757812px;
+    }
+    .Pixso-text-57_1073 {
+      font-size: 48px;
+      font-family: "Volkhov-Italic";
+      font-weight: Italic;
+      text-align: center;
+      color: rgba(219, 216, 193, 1);
+      width: 400.9169006347656px;
+      position: absolute;
+      left: 79.2698974609375px;
+      top: 201.12916564941406px;
+    }
+    .Pixso-text-57_1074 {
+      font-size: 32px;
+      font-family: "Volkhov-Italic";
+      font-weight: Italic;
+      text-align: center;
+      color: rgba(219, 216, 193, 1);
+      width: 501.3152770996094px;
+      height: 34.30564880371094px;
+      position: absolute;
+      left: 145.9990234375px;
+      top: 18.44024658203125px;
+    }
+    .Pixso-paragraph-57_1073_0,
+    .Pixso-paragraph-57_1073_1,
+    .Pixso-paragraph-57_1073_2 {
+      line-height: 61.92px;
+    }
+    .Pixso-paragraph-57_1074_0,
+    .Pixso-paragraph-57_1074_1 {
+      line-height: 41.28px;
+    }
+
+    /* Flash-сообщения – вне потока, поверх всего */
+    .flash-overlay {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 999;
+    }
+    .flash-overlay div {
+      padding: 8px 16px;
+      margin: 5px;
+      background: #fff;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+<div class="scale-wrapper">
+  <div class="Pixso-frame-57_1046" id="pixso-frame">
+    <!-- Flash-сообщения (если есть) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-overlay">
+          {% for cat, msg in messages %}
+            <div class="flash-{{ cat }}">{{ msg }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Вся разметка из макета -->
+    <div class="Pixso-rectangle-57_1047" style="background-image: url('{{ url_for('static', filename='images/7d0fcde2e50c3113b271d3c5fd0f97750e1957c6.png') }}');"></div>
+    <div class="Pixso-vector-57_1466" id="logout-btn"></div>
+    <div class="Pixso-vector-57_1468" id="profile-btn"></div>
+    <p class="Pixso-paragraph-57_1470">{{ current_user.first_name if current_user.is_authenticated else 'Гость' }}</p>
+    <div class="Pixso-vector-57_1471" id="cart-btn"></div>
+    <p class="Pixso-paragraph-57_1048">Ресторан "Мяско"</p>
+    <p class="Pixso-paragraph-57_1049">Ресторан "Мяско"</p>
+    <div class="Pixso-vector-57_1050"></div>
+    <div class="Pixso-vector-57_1052"></div>
+    <div class="Pixso-group-57_1065" id="menu-btn">
+      <div class="Pixso-rectangle-57_1066"></div>
+      <p class="Pixso-paragraph-57_1067">Посмотреть меню</p>
+    </div>
+    <div class="Pixso-group-57_1068" id="reservation-btn">
+      <div class="Pixso-rectangle-57_1069"></div>
+      <p class="Pixso-paragraph-57_1070">Забронировать столик</p>
+    </div>
+    <div class="Pixso-group-57_1071" id="order-btn">
+      <div class="Pixso-rectangle-57_1072"></div>
+      <div class="Pixso-text-57_1073">
+        <p class="Pixso-paragraph-57_1073_0"><span>Заказать </span></p>
+        <p class="Pixso-paragraph-57_1073_1"><span>доставку / </span></p>
+        <p class="Pixso-paragraph-57_1073_2"><span>на вынос</span></p>
+      </div>
+    </div>
+    <div class="Pixso-text-57_1074">
+      <p class="Pixso-paragraph-57_1074_0"><span>Москва, улица Покровка, дом 17</span></p>
+      <p class="Pixso-paragraph-57_1074_1"><span>+7 (495) 819-32-54</span></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Масштабирование для адаптивности
+  function resize() {
+    const frame = document.getElementById('pixso-frame');
+    if (!frame) return;
+    const targetWidth = 1920, targetHeight = 1080;
+    const scaleX = window.innerWidth / targetWidth;
+    const scaleY = window.innerHeight / targetHeight;
+    const scale = Math.min(scaleX, scaleY);
+    frame.style.transform = `scale(${scale})`;
+    // Устанавливаем размеры обёртки, чтобы она была точно по размеру масштабированного блока
+    const wrapper = document.querySelector('.scale-wrapper');
+    wrapper.style.width = targetWidth * scale + 'px';
+    wrapper.style.height = targetHeight * scale + 'px';
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // Обработчики кликов для навигации
+  function goTo(url) { setTimeout(() => { window.location.href = url; }, 200); }
+  document.getElementById('logout-btn').addEventListener('click', () => goTo("{{ url_for('logout') }}"));
+  document.getElementById('profile-btn').addEventListener('click', () => goTo("{{ url_for('profile') }}"));
+  document.getElementById('cart-btn').addEventListener('click', () => goTo("{{ url_for('cart') }}"));
+  document.querySelector('.Pixso-vector-57_1052').addEventListener('click', () => goTo("{{ url_for('index') }}"));
+  document.getElementById('menu-btn').addEventListener('click', () => goTo("{{ url_for('menu') }}"));
+  document.getElementById('reservation-btn').addEventListener('click', () => goTo("{{ url_for('reservation') }}"));
+  document.getElementById('order-btn').addEventListener('click', () => goTo("{{ url_for('menu') }}"));
+</script>
+</body>
+</html>

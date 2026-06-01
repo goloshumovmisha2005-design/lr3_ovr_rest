@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="admin-wrapper">
+    <aside class="admin-sidebar">
+        <h3>Админ</h3>
+        <ul>
+            <li><a href="{{ url_for('admin_dashboard') }}">Дашборд</a></li>
+            {% if current_user.role == 'admin' %}
+            <li><a href="{{ url_for('admin_users') }}">Пользователи</a></li>
+            {% endif %}
+            {% if current_user.role in ('admin', 'manager') %}
+            <li><a href="{{ url_for('admin_menu') }}">Меню</a></li>
+            <li><a href="{{ url_for('admin_orders') }}">Заказы</a></li>
+            <li><a href="{{ url_for('admin_tables') }}">Столы</a></li>
+            {% endif %}
+            {% if current_user.role in ('admin', 'hostess') %}
+            <li><a href="{{ url_for('admin_reservations') }}">Брони</a></li>
+            {% endif %}
+            {% if current_user.role == 'admin' %}
+            <li><a href="{{ url_for('admin_database') }}">База данных</a></li>
+            <li><a href="{{ url_for('admin_floor_plan') }}">Конструктор зала</a></li>
+            <li><a href="{{ url_for('import_data') }}">Импорт данных</a></li>
+            <li><a href="{{ url_for('export_database') }}" class="btn-link">💾 Экспорт БД</a></li>
+            {% endif %}
+        </ul>
+    </aside>
+    <main class="admin-content">
+        {% block admin_content %}{% endblock %}
+    </main>
+</div>
+{% endblock %}

@@ -1,0 +1,141 @@
+<!-- base.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title or 'Мяско' }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% if request.path.startswith('/admin') %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin_style.css') }}">
+    {% endif %}
+    <script>const csrfToken = '{{ csrf_token_value }}';</script>
+</head>
+<body>
+    <div id="confirm-modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <p id="modal-message"></p>
+        <div class="modal-actions">
+          <button id="modal-cancel">Отмена</button>
+          <form id="modal-form" method="POST">
+            <button type="submit" id="modal-confirm">Подтвердить</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <header>
+        <div class="logo">
+            <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Мяско" height="40"></a>
+        </div>
+        <nav class="top-menu">
+            <a href="{{ url_for('menu') }}">Меню</a>
+            <a href="{{ url_for('reservation') }}">Бронь стола</a>
+            <a href="{{ url_for('cart') }}">Корзина</a>
+            {% if current_user.is_authenticated %}
+                <div class="dropdown">
+                    <button class="dropbtn">{{ current_user.first_name }}</button>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('profile') }}">Личный кабинет</a>
+                        {% if current_user.role in ('admin','manager','hostess') %}
+                            <a href="{{ url_for('admin_dashboard') }}">Панель управления</a>
+                        {% endif %}
+                        <a href="{{ url_for('logout') }}">Выйти</a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{{ url_for('login') }}">Войти</a>
+            {% endif %}
+        </nav>
+    </header>
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <ul class="flash-messages">
+              {% for category, message in messages %}
+                <li class="flash-{{ category }}">{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+    const modal = document.getElementById('confirm-modal');
+    const closeBtn = modal.querySelector('.close');
+    const cancelBtn = document.getElementById('modal-cancel');
+    const confirmForm = document.getElementById('modal-form');
+    const modalMessage = document.getElementById('modal-message');
+
+    function openModal(message, url, method = 'POST', extraFields = null) {
+        modalMessage.textContent = message;
+        confirmForm.action = url;
+        confirmForm.method = method;
+        // Удаляем временные поля
+        confirmForm.querySelectorAll('.temp-field').forEach(el => el.remove());
+        // Добавляем CSRF-токен
+        let csrfInput = confirmForm.querySelector('input[name="csrf_token"]');
+        if (!csrfInput) {
+            csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrf_token';
+            csrfInput.value = csrfToken;
+            confirmForm.appendChild(csrfInput);
+        } else {
+            csrfInput.value = csrfToken;
+        }
+        if (extraFields) {
+            for (const [name, value] of Object.entries(extraFields)) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = name;
+                input.value = value;
+                input.classList.add('temp-field');
+                confirmForm.appendChild(input);
+            }
+        }
+        modal.style.display = 'block';
+    }
+
+    function closeModal() {
+        modal.style.display = 'none';
+    }
+
+    closeBtn.onclick = closeModal;
+    cancelBtn.onclick = closeModal;
+    window.onclick = function(event) {
+        if (event.target == modal) closeModal();
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.confirm-action').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const message = this.dataset.message || 'Вы уверены?';
+                const url = this.dataset.url;
+                const method = this.dataset.method || 'POST';
+                let extraFields = {};
+
+                if (this.dataset.remove) {
+                    extraFields['remove_item'] = this.dataset.remove;
+                }
+
+                const parentForm = this.closest('form');
+                if (parentForm && !this.dataset.ignoreForm) {
+                    const formData = new FormData(parentForm);
+                    for (const [key, value] of formData.entries()) {
+                        if (!extraFields.hasOwnProperty(key)) {
+                            extraFields[key] = value;
+                        }
+                    }
+                }
+
+                openModal(message, url, method, extraFields);
+            });
+        });
+    });
+    </script>
+</body>
+</html>

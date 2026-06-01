@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Бронирование столика</h2>
+<form method="POST" id="filter-form">
+  {{ form.hidden_tag() }}
+  <label style="font-weight:500;">{{ form.date.label }} {{ form.date(required=True, style="padding:8px; border-radius:12px; border:1px solid #ccc;") }}</label>
+  <label>С {{ form.start_hour }} : {{ form.start_min }}</label>
+  <label>до {{ form.end_hour }} : {{ form.end_min }}</label>
+  <label>{{ form.guests.label }} {{ form.guests(min=1, max=20, style="padding:8px; border-radius:12px;") }}</label>
+  {{ form.submit(class="btn") }}
+</form>
+
+{% if show_map %}
+  <div id="floor-plan" class="floor-plan" data-placeholder="Это схема зала">Загрузка...</div>
+{% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('filter-form');
+    {% if show_map %}
+    const date = form.date.value;
+    const startHour = form.start_hour.value || '18';
+    const startMin = form.start_min.value || '00';
+    const endHour = form.end_hour.value || '20';
+    const endMin = form.end_min.value || '00';
+    const startTime = startHour + ':' + startMin;
+    const endTime = endHour + ':' + endMin;
+    const guests = form.guests.value || 2;
+
+    fetch(`/api/tables?date=${date}&start=${startTime}&end=${endTime}&guests=${guests}`)
+      .then(r => r.json())
+      .then(tables => {
+          const container = document.getElementById('floor-plan');
+          container.innerHTML = '';
+
+          if (!tables || tables.length === 0) {
+              container.classList.add('empty');
+              return;
+          }
+          container.classList.remove('empty');
+
+          // Определяем границы контейнера
+          const padding = 20;
+          let maxX = 800, maxY = 600;
+          if (tables.length > 0) {
+              maxX = Math.max(...tables.map(t => (t.pos_x || 0) + (t.width || 100))) + padding;
+              maxY = Math.max(...tables.map(t => (t.pos_y || 0) + (t.height || 100))) + padding;
+          }
+          container.style.width = '100%';
+          container.style.height = maxY + 'px';
+          container.style.minHeight = '500px';
+          container.style.overflow = 'auto';
+
+          tables.forEach(t => {
+              const div = document.createElement('div');
+              div.className = 'table-card ' + (t.free ? (t.suitable ? 'free suitable' : 'free') : 'occupied');
+              div.innerHTML = `<strong>Стол ${t.id}</strong><br>${t.capacity} мест`;
+              // Используем сохранённые координаты или авто-сетку
+              const x = t.pos_x !== undefined && t.pos_x !== 0 ? t.pos_x : (20 + (tables.indexOf(t) % 5) * 150);
+              const y = t.pos_y !== undefined && t.pos_y !== 0 ? t.pos_y : (20 + Math.floor(tables.indexOf(t) / 5) * 120);
+              div.style.left = x + 'px';
+              div.style.top = y + 'px';
+              div.style.width = (t.width || 100) + 'px';
+              div.style.height = (t.height || 100) + 'px';
+              if (t.shape === 'circle') div.style.borderRadius = '50%';
+              else div.style.borderRadius = '12px';
+
+              if (t.free && t.suitable) {
+                  div.addEventListener('click', () => {
+                      if (confirm(`Забронировать стол ${t.id} на ${startTime}-${endTime}?`)) {
+                          let bookingForm = document.createElement('form');
+                          bookingForm.method = 'POST';
+                          bookingForm.innerHTML = `
+                            <input type="hidden" name="csrf_token" value="${csrfToken}">
+                            <input name="date" value="${date}">
+                            <input name="start_hour" value="${startHour}">
+                            <input name="start_min" value="${startMin}">
+                            <input name="end_hour" value="${endHour}">
+                            <input name="end_min" value="${endMin}">
+                            <input name="guests" value="${guests}">
+                            <input name="table_id" value="${t.id}" required>
+                          `;
+                          document.body.appendChild(bookingForm);
+                          bookingForm.submit();
+                      }
+                  });
+              }
+              container.appendChild(div);
+          });
+      });
+    {% endif %}
+});
+</script>
+{% endblock %}

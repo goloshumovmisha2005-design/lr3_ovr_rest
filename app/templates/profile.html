@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Личный кабинет</h2>
+<div class="profile-layout">
+    <!-- Сайдбар -->
+    <div class="profile-sidebar">
+        <a href="#bonus">Бонусы: {{ current_user.bonus_points }}</a>
+        <a href="{{ url_for('edit_profile') }}">Редактировать профиль</a>
+        <a href="#orders">Мои заказы</a>
+        <a href="#reservations">Мои бронирования</a>
+        <a href="#reviews">Мои отзывы</a>
+        <a href="#addresses">Адреса доставки</a>
+        <a href="#cards">Платёжные карты</a>
+        <a href="#allergens">Мои аллергены</a>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="profile-content">
+        <div id="bonus">
+            <p>Баланс бонусов: {{ current_user.bonus_points }}</p>
+            <a href="{{ url_for('edit_profile') }}" class="btn">Редактировать профиль</a>
+        </div>
+
+        <hr>
+        <div id="orders">
+            <h3>Мои заказы</h3>
+            {% for order in orders %}
+            <div class="order-row">
+                <span>Заказ №{{ order.id }} — {{ order.total_price }} ₽ (
+                    {% if order.status == 'created' %}Создан
+                    {% elif order.status == 'paid' %}Оплачен
+                    {% elif order.status == 'in_progress' %}В работе
+                    {% elif order.status == 'completed' %}Завершён
+                    {% elif order.status == 'cancelled' %}Отменён
+                    {% else %}{{ order.status }}{% endif %}
+                )</span>
+                <a href="{{ url_for('order_detail', order_id=order.id) }}" class="btn">Детали</a>
+                {% if order.status == 'paid' %}
+                <form method="POST" action="{{ url_for('cancel_order', order_id=order.id) }}" style="display:inline">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+                    <button type="submit" class="btn" onclick="return confirm('Отменить заказ №{{ order.id }}?')">Отменить</button>
+                </form>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div id="reservations">
+            <h3>Мои бронирования</h3>
+            {% for res in reservations %}
+            <div class="reservation-row">
+                <span>{{ res.date }} {{ res.start_time or '—' }} - {{ res.end_time or '—' }}, {{ res.guests }} чел. (
+                    {% if res.status == 'active' %}Активна
+                    {% elif res.status == 'cancelled' %}Отменена
+                    {% else %}{{ res.status }}{% endif %}
+                )</span>
+                {% if res.status == 'active' %}
+                <a href="{{ url_for('edit_reservation', res_id=res.id) }}" class="btn">Редактировать</a>
+                <form method="POST" action="{{ url_for('cancel_reservation', res_id=res.id) }}" style="display:inline">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+                    <button type="submit" class="btn" onclick="return confirm('Отменить бронь на {{ res.date }}?')">Отменить</button>
+                </form>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <hr>
+        <div id="reviews">
+            <h3>Мои отзывы</h3>
+            {% for rev in my_reviews %}
+            <div>
+              <strong>{{ rev.name }}</strong> ({{ rev.rating }}/5) – {{ rev.text }}
+              <small>{{ rev.created_at }}</small>
+            </div>
+            {% else %}
+            <p>Нет отзывов</p>
+            {% endfor %}
+        </div>
+
+        <hr>
+        <div id="addresses">
+            <h3>Адреса доставки</h3>
+            {% for addr in addresses %}
+            <div>
+              {{ addr.address }}
+              <form method="POST" action="{{ url_for('delete_address', addr_id=addr.id) }}" style="display:inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+                <button type="submit" class="btn" onclick="return confirm('Удалить адрес {{ addr.address }}?')">Удалить</button>
+              </form>
+            </div>
+            {% endfor %}
+            <form method="POST" action="{{ url_for('add_address') }}" style="margin-top:10px;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+                <input type="text" name="address" placeholder="Новый адрес" required>
+                <button type="submit" class="btn">Добавить</button>
+            </form>
+        </div>
+
+        <div id="cards">
+            <h3>Платёжные карты</h3>
+            {% for pm in payments %}
+            <div>
+              ****{{ pm.card_number }}
+              <form method="POST" action="{{ url_for('delete_payment', pay_id=pm.id) }}" style="display:inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+                <button type="submit" class="btn" onclick="return confirm('Удалить карту ****{{ pm.card_number }}?')">Удалить</button>
+              </form>
+            </div>
+            {% endfor %}
+            <form method="POST" action="{{ url_for('add_payment') }}" style="margin-top:10px;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+                <input type="text" name="card_number" placeholder="Последние 4 цифры" required maxlength="4" pattern="[0-9]{4}">
+                <button type="submit" class="btn">Добавить</button>
+            </form>
+        </div>
+
+        <div id="allergens">
+            <h3>Мои аллергены</h3>
+            {% for al in allergens %}
+            <div>
+              {{ al.allergen }}
+              <form method="POST" action="{{ url_for('delete_allergen', allergen_id=al.id) }}" style="display:inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+                <button type="submit" class="btn" onclick="return confirm('Удалить аллерген {{ al.allergen }}?')">Удалить</button>
+              </form>
+            </div>
+            {% endfor %}
+            <form method="POST" action="{{ url_for('add_allergen') }}" style="margin-top:10px;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+                <input type="text" name="allergen" placeholder="Аллерген (напр. глютен)" required>
+                <button type="submit" class="btn">Добавить</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

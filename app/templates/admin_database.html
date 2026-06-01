@@ -1,0 +1,9 @@
+{% extends "admin_base.html" %}
+{% block admin_content %}
+<h2>Таблицы базы данных</h2>
+<ul>
+    {% for t in tables %}
+    <li><a href="{{ url_for('admin_view_table', table_name=t) }}">{{ t }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Административная панель</h2>
+<h3>Все заказы</h3>
+{% for order in orders %}
+    <p>№{{ order.id }}, пользователь: {{ order.first_name }} {{ order.last_name }}, сумма: {{ order.total_price }}, статус: {{ order.status }}</p>
+{% endfor %}
+<h3>Все бронирования</h3>
+{% for res in reservations %}
+    <p>{{ res.first_name }} {{ res.last_name }}: {{ res.date }} {{ res.start_time }}-{{ res.end_time }}, стол {{ res.table_id }} ({{ res.capacity }} мест) — {{ res.status }}</p>
+{% endfor %}
+{% endblock %}

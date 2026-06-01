@@ -1,0 +1,28 @@
+{% extends "admin_base.html" %}
+{% block admin_content %}
+<h2>Таблица: {{ table_name }}</h2>
+<table>
+    <tr>
+        {% for col in columns %}
+        <th>{{ col }}</th>
+        {% endfor %}
+    </tr>
+    {% for row in rows %}
+    <tr>
+        {% for col in columns %}
+        <td>{{ row[col] }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+<div>
+    {% if page > 1 %}
+    <a href="{{ url_for('admin_view_table', table_name=table_name, page=page-1) }}">← Назад</a>
+    {% endif %}
+    Страница {{ page }} из {{ (total / per_page)|round(0, 'ceil')|int }}
+    {% if page * per_page < total %}
+    <a href="{{ url_for('admin_view_table', table_name=table_name, page=page+1) }}">Вперёд →</a>
+    {% endif %}
+</div>
+<a href="{{ url_for('admin_database') }}">← К списку таблиц</a>
+{% endblock %}

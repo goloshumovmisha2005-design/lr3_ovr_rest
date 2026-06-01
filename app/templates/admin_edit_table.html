@@ -1,0 +1,11 @@
+{% extends "admin_base.html" %}
+{% block admin_content %}
+<h2>Редактировать стол №{{ table.id }}</h2>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    {{ form.capacity.label }} {{ form.capacity }}<br>
+    {{ form.location.label }} {{ form.location }}<br>
+    {{ form.active.label }} {{ form.active }}<br>
+    {{ form.submit(class="btn") }}
+</form>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dish-detail">
+    {% if item.image %}
+        <img src="{{ url_for('static', filename=item.image) if not item.image.startswith('http') else item.image }}" class="detail-image">
+    {% else %}
+        <img src="{{ url_for('static', filename='images/default_food.jpg') }}" class="detail-image">
+    {% endif %}
+    <div class="detail-info">
+        <p><a href="{{ url_for('menu', cat=item.category_id) }}">← {{ category.name }}</a></p>
+        <h1>{{ item.name }}</h1>
+        <p class="desc">{{ item.description }}</p>
+        <p class="price"><strong>{{ item.price }} ₽</strong></p>
+        {% if current_user.is_authenticated %}
+        <form method="post" action="{{ url_for('add_to_cart') }}" class="add-to-cart">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+            <input type="hidden" name="item_id" value="{{ item.id }}">
+            <input type="number" name="quantity" value="1" min="1" style="width:60px">
+            <button type="submit">В корзину</button>
+        </form>
+        {% endif %}
+    </div>
+
+    <div class="reviews-section">
+        <h2>Отзывы</h2>
+        {% for review in reviews %}
+            <div class="review">
+                <p><strong>{{ review.first_name }}</strong> ({{ review.rating }}/5)</p>
+                <p>{{ review.text }}</p>
+                <small>{{ review.created_at }}</small>
+            </div>
+        {% else %}
+            <p>Пока нет отзывов.</p>
+        {% endfor %}
+
+        {% if current_user.is_authenticated %}
+        <h3>Оставить отзыв</h3>
+        <form method="post" class="review-form">
+            {{ form.hidden_tag() }}
+            {{ form.rating.label }} {{ form.rating }}
+            {{ form.text(rows="3", placeholder="Ваш отзыв...") }}
+            {{ form.submit(class="btn") }}
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

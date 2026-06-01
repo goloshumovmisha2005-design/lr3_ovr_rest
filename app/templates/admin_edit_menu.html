@@ -1,0 +1,24 @@
+{% extends "admin_base.html" %}
+{% block admin_content %}
+<h2>Редактировать блюдо</h2>
+<form method="POST" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    {{ form.name.label }} {{ form.name }}<br>
+    {{ form.price.label }} {{ form.price(step="0.01") }}<br>
+    {{ form.category_id.label }} {{ form.category_id }}<br>
+    {{ form.description.label }} {{ form.description }}<br>
+    {{ form.available.label }} {{ form.available }}<br>
+    <label>Фото (файл): {{ form.image_file }}</label><br>
+    <label>или URL: {{ form.image_url(placeholder="https://...") }}</label><br>
+    {% if item.image %}
+        <p>Текущее фото:
+        {% if item.image.startswith('http') %}
+            <img src="{{ item.image }}" height="80">
+        {% else %}
+            <img src="{{ url_for('static', filename=item.image) }}" height="80">
+        {% endif %}
+        </p>
+    {% endif %}
+    {{ form.submit(class="btn") }}
+</form>
+{% endblock %}

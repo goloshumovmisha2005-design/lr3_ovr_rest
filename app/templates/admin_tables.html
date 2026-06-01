@@ -1,0 +1,37 @@
+{% extends "admin_base.html" %}
+{% block admin_content %}
+<h2>Столы</h2>
+{% if current_user.role == 'admin' %}
+<form method="POST" action="{{ url_for('admin_add_table') }}">
+    {{ add_form.hidden_tag() }}
+    {{ add_form.capacity(placeholder="Вместимость") }}
+    {{ add_form.location(placeholder="Расположение") }}
+    {{ add_form.submit(class="btn") }}
+</form>
+{% endif %}
+<hr>
+<table>
+    <tr><th>ID</th><th>Вместимость</th><th>Расположение</th><th>Активен</th><th>Действия</th></tr>
+    {% for t in tables %}
+    <tr>
+        <td>{{ t.id }}</td>
+        <td>{{ t.capacity }}</td>
+        <td>{{ t.location or '' }}</td>
+        <td>{{ 'Да' if t.active else 'Нет' }}</td>
+        <td>
+            <form method="POST" action="{{ url_for('admin_toggle_table', table_id=t.id) }}" style="display:inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+                <button type="submit" class="btn btn-toggle">{{ 'Деактивировать' if t.active else 'Активировать' }}</button>
+            </form>
+            {% if current_user.role == 'admin' %}
+            <a href="{{ url_for('admin_edit_table', table_id=t.id) }}" class="btn btn-edit">✏️</a>
+            <form method="POST" action="{{ url_for('admin_delete_table', table_id=t.id) }}" style="display:inline" onsubmit="return confirm('Удалить стол?')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+                <button type="submit" class="btn btn-delete">🗑️</button>
+            </form>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

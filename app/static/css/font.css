@@ -1,0 +1,41 @@
+
+@font-face {
+  font-family: 'Volkhov-Italic';
+  font-style: normal;
+  font-weight: 400;
+  src: url(../font/Volkhov-Italic_1.ttf) format(truetype);
+}
+
+		
+@font-face {
+  font-family: 'Inter-Regular';
+  font-style: normal;
+  font-weight: 100 900;
+  src: url(../font/Inter_1.ttf) format(truetype);
+}
+
+		
+@font-face {
+  font-family: 'Vollkorn-Bold';
+  font-style: normal;
+  font-weight: 400 900;
+  src: url(../font/Vollkorn_wght__2.ttf) format(truetype);
+}
+
+		
+@font-face {
+  font-family: 'Volkhov-Bold Italic';
+  font-style: normal;
+  font-weight: 700;
+  src: url(../font/Volkhov-BoldItalic_1.ttf) format(truetype);
+}
+
+		
+@font-face {
+  font-family: 'Anek Devanagari-Regular';
+  font-style: normal;
+  font-weight: 100 800;
+  src: url(../font/AnekDevanagari_wdth_wght__1.ttf) format(truetype);
+}
+
+		

@@ -1,0 +1,27 @@
+{% extends "admin_base.html" %}
+{% block admin_content %}
+<h2>Импорт данных</h2>
+
+<h3>Экспорт данных</h3>
+<p><a href="{{ url_for('export_database') }}" class="btn">💾 Скачать БД (SQLite)</a></p>
+<p><a href="{{ url_for('export_json') }}" class="btn">📋 Скачать данные (JSON)</a></p>
+
+<h3>Импорт SQLite дампа</h3>
+<form method="POST" enctype="multipart/form-data" action="{{ url_for('import_sqlite') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+    <input type="file" name="dbfile" accept=".sqlite" required>
+    <button type="submit" class="btn">Загрузить и восстановить</button>
+</form>
+
+<hr>
+
+<h3>Импорт из JSON</h3>
+<form method="POST" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    <label>{{ form.datafile.label }}: {{ form.datafile(accept=".json") }}</label><br><br>
+    <label>{{ form.import_menu }} {{ form.import_menu.label }}</label><br>
+    <label>{{ form.import_users }} {{ form.import_users.label }}</label><br>
+    <label>{{ form.import_tables }} {{ form.import_tables.label }}</label><br><br>
+    {{ form.submit(class="btn") }}
+</form>
+{% endblock %}

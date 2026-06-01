@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Редактировать бронь</h2>
+<p>Стол №{{ reservation.table_id }} ({{ reservation.guests }} чел. – будет изменено)</p>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    {{ form.date.label }}<br>
+    {{ form.date(required=True) }}<br>
+    {{ form.start_time.label }}<br>
+    {{ form.start_time(placeholder="ЧЧ:ММ", required=True) }}<br>
+    {{ form.end_time.label }}<br>
+    {{ form.end_time(placeholder="ЧЧ:ММ", required=True) }}<br>
+    {{ form.guests.label }}<br>
+    {{ form.guests(min=1) }}<br><br>
+    {{ form.submit(class="btn") }}
+</form>
+{% endblock %}

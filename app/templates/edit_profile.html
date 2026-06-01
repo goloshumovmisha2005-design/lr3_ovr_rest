@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Редактирование профиля</h2>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul class="flash-messages">
+      {% for cat, msg in messages %}
+        <li class="flash-{{ cat }}">{{ msg }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+<form method="post">
+    {{ form.hidden_tag() }}
+    {{ form.first_name.label }} {{ form.first_name }}<br>
+    {{ form.last_name.label }} {{ form.last_name }}<br>
+    {{ form.email.label }} {{ form.email }}<br>
+    <h4>Изменить пароль</h4>
+    {{ form.password.label }} {{ form.password(placeholder="Текущий пароль") }}<br>
+    {{ form.new_password.label }} {{ form.new_password(placeholder="Новый пароль") }}<br>
+    {{ form.submit(class="btn") }}
+</form>
+{% endblock %}

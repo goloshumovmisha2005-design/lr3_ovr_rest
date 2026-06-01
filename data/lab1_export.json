@@ -1,0 +1,1044 @@
+{
+  "menu_items": [
+    {
+      "category": "Закуски",
+      "name": "Тартар из мраморной говядины",
+      "description": "Рубленая мраморная говядина с луком‑шалот, корнишонами, желтком перепелиного яйца, дижонской горчицей и хрустящими гренками. 180 г",
+      "price": 950,
+      "image": "images/menu/zakuski/tartar_iz_mramornoy_govyadiny.jpg",
+      "allergens": "глютен, яйцо, горчица"
+    },
+    {
+      "category": "Закуски",
+      "name": "Брускетта с ростбифом",
+      "description": "Поджаренная чиабатта с тонкими ломтиками розового ростбифа, вялеными томатами, рукколой и пармезаном. 150 г",
+      "price": 690,
+      "image": "images/menu/zakuski/brusketta_s_rostbifom.jpg",
+      "allergens": "глютен, молоко"
+    },
+    {
+      "category": "Закуски",
+      "name": "Сало по‑домашнему",
+      "description": "Тонко нарезанное сало с чесноком, чёрный бородинский хлеб, хрен и зерновая горчица. 120 г",
+      "price": 490,
+      "image": "images/menu/zakuski/salo_po_domashnemu.jpg",
+      "allergens": "глютен, горчица"
+    },
+    {
+      "category": "Закуски",
+      "name": "Язык говяжий заливной",
+      "description": "Нежный отварной язык в желе с хреном, маринованным луком и зеленью. 150 г",
+      "price": 750,
+      "image": "images/menu/zakuski/yazyk_govyazhiy_zalivnoy.jpg",
+      "allergens": "глютен (в желе)"
+    },
+    {
+      "category": "Закуски",
+      "name": "Мясная тарелка «Мужской разговор»",
+      "description": "Прошутто, брезаола, копчёная оленина, домашняя ветчина, сырный мусс с трюфельным маслом. 350 г",
+      "price": 1790,
+      "image": "images/menu/zakuski/myasnaya_tarelka_muzhskoy_razgovor.jpg",
+      "allergens": "молоко, глютен (в хлебе)"
+    },
+    {
+      "category": "Супы",
+      "name": "Борщ с мясом",
+      "description": "Наваристый борщ на говяжьей грудинке, подаётся со сметаной и чесночной пампушкой. 400 мл",
+      "price": 590,
+      "image": "images/menu/supy/borsch_s_myasom.jpg",
+      "allergens": "глютен, молоко"
+    },
+    {
+      "category": "Супы",
+      "name": "Солянка мясная сборная",
+      "description": "Говядина, телятина, копчёности, солёные огурцы, оливки, лимон, сметана. 400 мл",
+      "price": 650,
+      "image": "images/menu/supy/solyanka_myasnaya_sbornaya.jpg",
+      "allergens": "глютен, молоко"
+    },
+    {
+      "category": "Супы",
+      "name": "Харчо из телятины",
+      "description": "Пряный томатный суп с рисом, грецкими орехами, кинзой. 350 мл",
+      "price": 620,
+      "image": "images/menu/supy/harcho_iz_telyatiny.jpg",
+      "allergens": "орехи"
+    },
+    {
+      "category": "Супы",
+      "name": "Крем‑суп из копчёных мясных деликатесов",
+      "description": "С тёртым пармезаном и гренками. 300 мл",
+      "price": 690,
+      "image": "images/menu/supy/krem_sup_iz_kopchenyh_delikatesov.jpg",
+      "allergens": "глютен, молоко"
+    },
+    {
+      "category": "Горячие мясные блюда",
+      "name": "Телячьи щёчки",
+      "description": "Томлёные в красном вине, с пюре из сельдерея, трюфельное масло. 300 г",
+      "price": 1690,
+      "image": "images/menu/goryachie_myasnye/telyachi_shchechki.jpg",
+      "allergens": "молоко"
+    },
+    {
+      "category": "Горячие мясные блюда",
+      "name": "Каре ягнёнка (250 г)",
+      "description": "На розмарине, с мятным соусом и запечённым чесноком. 250 г",
+      "price": 1890,
+      "image": "images/menu/goryachie_myasnye/kare_yagnyonka.jpg",
+      "allergens": "чеснок"
+    },
+    {
+      "category": "Горячие мясные блюда",
+      "name": "Стейк из мраморной свинины",
+      "description": "С яблочно‑горчичным соусом, карамелизированные груши. 250 г",
+      "price": 1390,
+      "image": "images/menu/goryachie_myasnye/steyk_iz_mramornoy_svininy.jpg",
+      "allergens": "горчица"
+    },
+    {
+      "category": "Горячие мясные блюда",
+      "name": "Бургер «Мяско»",
+      "description": "Котлета из мраморной говядины, сыр чеддер, карамельный лук, бекон, соус BBQ, картофель фри. 400 г",
+      "price": 1190,
+      "image": "images/menu/goryachie_myasnye/burger_myasko.jpg",
+      "allergens": "глютен, молоко, яйцо"
+    },
+    {
+      "category": "Горячие мясные блюда",
+      "name": "Печень телячья по‑строгановски",
+      "description": "Со сливками, грибами, луком, подаётся с картофельным гратеном. 280 г",
+      "price": 950,
+      "image": "images/menu/goryachie_myasnye/pechen_telyachya_po_stroganovski.jpg",
+      "allergens": "молоко"
+    },
+    {
+      "category": "Горячие мясные блюда",
+      "name": "Домашние колбаски из оленины",
+      "description": "С клюквенным соусом, тушёной капустой и печёным картофелем. 300 г",
+      "price": 1150,
+      "image": "images/menu/goryachie_myasnye/domashnie_kolbaski_iz_oleniny.jpg",
+      "allergens": "молоко (в соусе)"
+    },
+    {
+      "category": "Премиальные стейки",
+      "name": "Рибай Prime",
+      "description": "Толстый край, насыщенная мраморность. 300 г",
+      "price": 1690,
+      "image": "images/menu/premialnye_steyki/ribay_prime.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Премиальные стейки",
+      "name": "Стриплойн «Нью‑Йорк»",
+      "description": "Тонкий край, плотная текстура. 300 г",
+      "price": 1790,
+      "image": "images/menu/premialnye_steyki/striployn_nyu_york.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Премиальные стейки",
+      "name": "Ти‑Боун",
+      "description": "Т‑образная кость (филе + стриплойн). 500 г",
+      "price": 2490,
+      "image": "images/menu/premialnye_steyki/ti_boun.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Премиальные стейки",
+      "name": "Портерхаус",
+      "description": "Увеличенный Ти‑Боун. 600 г",
+      "price": 2990,
+      "image": "images/menu/premialnye_steyki/porterhaus.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Премиальные стейки",
+      "name": "Филе‑миньон",
+      "description": "Центр вырезки, самый нежный. 200 г",
+      "price": 1990,
+      "image": "images/menu/premialnye_steyki/file_minyon.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Премиальные стейки",
+      "name": "Томагавк",
+      "description": "Рибай на длинной кости. 700 г",
+      "price": 3990,
+      "image": "images/menu/premialnye_steyki/tomagavk.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Премиальные стейки",
+      "name": "Ковбой‑стейк",
+      "description": "Томагавк с короткой костью. 450 г",
+      "price": 2790,
+      "image": "images/menu/premialnye_steyki/kouboy_steyk.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Премиальные стейки",
+      "name": "Шатобриан",
+      "description": "Толстый кусок вырезки на двоих. 350 г",
+      "price": 2490,
+      "image": "images/menu/premialnye_steyki/shatobrian.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Альтернативные стейки",
+      "name": "Стейк «Мясника»",
+      "description": "Лопатка (топ блейд). 250 г",
+      "price": 1290,
+      "image": "images/menu/alternativnye_steyki/steyk_myasnika.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Альтернативные стейки",
+      "name": "Стейк «Мачете»",
+      "description": "Диафрагма. 300 г",
+      "price": 1190,
+      "image": "images/menu/alternativnye_steyki/steyk_machete.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Альтернативные стейки",
+      "name": "Стейк «Фланк»",
+      "description": "Пашина. 250 г",
+      "price": 1190,
+      "image": "images/menu/alternativnye_steyki/steyk_flank.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Альтернативные стейки",
+      "name": "Стейк «Вегас»",
+      "description": "Лопатка с жировыми прослойками. 250 г",
+      "price": 1290,
+      "image": "images/menu/alternativnye_steyki/steyk_vegas.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Альтернативные стейки",
+      "name": "Денвер",
+      "description": "Шейная часть. 250 г",
+      "price": 1290,
+      "image": "images/menu/alternativnye_steyki/denver.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Альтернативные стейки",
+      "name": "Скёрт‑стейк",
+      "description": "Диафрагма («юбка»). 250 г",
+      "price": 1190,
+      "image": "images/menu/alternativnye_steyki/skert_steyk.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Альтернативные стейки",
+      "name": "Топ‑сирлойн",
+      "description": "Верх тазобедренного отруба. 250 г",
+      "price": 1190,
+      "image": "images/menu/alternativnye_steyki/top_sirloin.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Dry Aged",
+      "name": "Рибай Dry Aged",
+      "description": "Выдержка 30 дней, концентрированная говяжья сладость. 300 г",
+      "price": 2490,
+      "image": "images/menu/dry_aged/ribay_dry_aged.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Dry Aged",
+      "name": "Стриплойн Dry Aged",
+      "description": "Выдержка 30 дней, ореховые ноты. 300 г",
+      "price": 2390,
+      "image": "images/menu/dry_aged/striployn_dry_aged.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Dry Aged",
+      "name": "Томагавк Dry Aged Prime",
+      "description": "Выдержка 45 дней, премиальный отруб. 700 г",
+      "price": 4990,
+      "image": "images/menu/dry_aged/tomagavk_dry_aged.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Гарниры",
+      "name": "Картофель фри с розмарином",
+      "description": "Хрустящие дольки, посыпанные розмарином и крупной солью. 200 г",
+      "price": 350,
+      "image": "images/menu/garniry/kartofel_fri_s_rozmarinom.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Гарниры",
+      "name": "Картофельное пюре с трюфельным маслом",
+      "description": "Нежное пюре на сливках с ароматом трюфеля. 200 г",
+      "price": 390,
+      "image": "images/menu/garniry/kartofelnoe_pyure_s_tryufelnym_maslom.jpg",
+      "allergens": "молоко"
+    },
+    {
+      "category": "Гарниры",
+      "name": "Гриль‑овощи",
+      "description": "Ассорти из баклажанов, цукини, сладкого перца и шампиньонов. 220 г",
+      "price": 420,
+      "image": "images/menu/garniry/gril_ovoshi.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Гарниры",
+      "name": "Рис с овощами и пармезаном",
+      "description": "Ароматный рис с морковью, горошком и пармезаном. 200 г",
+      "price": 370,
+      "image": "images/menu/garniry/ris_s_ovoshami_i_parmezanom.jpg",
+      "allergens": "молоко"
+    },
+    {
+      "category": "Гарниры",
+      "name": "Запечённый картофель с беконом и сыром",
+      "description": "Крупная картофелина, запечённая с копчёным беконом и чеддером. 250 г",
+      "price": 440,
+      "image": "images/menu/garniry/zapechennyy_kartofel_s_bekonom_i_syrom.jpg",
+      "allergens": "молоко"
+    },
+    {
+      "category": "Соусы",
+      "name": "Ягодный соус",
+      "description": "Клюква, брусника, красное вино. 50 мл",
+      "price": 150,
+      "image": "images/menu/sousy/yagodnyy_sous.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Соусы",
+      "name": "Соус «Блю‑Чиз»",
+      "description": "Сливочный сыр с плесенью. 50 мл",
+      "price": 160,
+      "image": "images/menu/sousy/sous_blyu_chiz.jpg",
+      "allergens": "молоко"
+    },
+    {
+      "category": "Соусы",
+      "name": "Перечный соус",
+      "description": "Коньяк, сливки, три вида перца. 50 мл",
+      "price": 150,
+      "image": "images/menu/sousy/perechnyy_sous.jpg",
+      "allergens": "молоко"
+    },
+    {
+      "category": "Соусы",
+      "name": "Соус «Мясная симфония»",
+      "description": "Демиглас с трюфельным маслом. 50 мл",
+      "price": 180,
+      "image": "images/menu/sousy/sous_myasnaya_simfoniya.jpg",
+      "allergens": "молоко"
+    },
+    {
+      "category": "Соусы",
+      "name": "Соус BBQ",
+      "description": "Копчёный, сладковатый. 50 мл",
+      "price": 130,
+      "image": "images/menu/sousy/sous_bbq.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Соусы",
+      "name": "Сливочно‑чесночный",
+      "description": "Нежный сливочный соус с чесноком. 50 мл",
+      "price": 140,
+      "image": "images/menu/sousy/slivochno_chesnochnyy.jpg",
+      "allergens": "молоко"
+    },
+    {
+      "category": "Соусы",
+      "name": "Хрен с мёдом",
+      "description": "Острый хрен с добавлением липового мёда. 40 мл",
+      "price": 120,
+      "image": "images/menu/sousy/hren_s_medom.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Десерты",
+      "name": "Медовик «Мяско»",
+      "description": "С говяжьей карамелью, грецкий орех. 150 г",
+      "price": 520,
+      "image": "images/menu/deserty/medovik_myasko.jpg",
+      "allergens": "глютен, молоко, орехи"
+    },
+    {
+      "category": "Десерты",
+      "name": "Шоколадный фондан",
+      "description": "С вишнёвым соусом и ванильным мороженым. 120 г",
+      "price": 550,
+      "image": "images/menu/deserty/shokoladnyy_fondan.jpg",
+      "allergens": "глютен, молоко, яйцо"
+    },
+    {
+      "category": "Десерты",
+      "name": "Сырная тарелка",
+      "description": "Три вида сыра с медово‑горчичным соусом и орехами. 200 г",
+      "price": 690,
+      "image": "images/menu/deserty/syrnaya_tarelka.jpg",
+      "allergens": "молоко, орехи, горчица"
+    },
+    {
+      "category": "Десерты",
+      "name": "Яблочный штрудель",
+      "description": "С пряным соусом из копчёной груши, ванильное мороженое. 160 г",
+      "price": 480,
+      "image": "images/menu/deserty/yablochnyy_shtrudel.jpg",
+      "allergens": "глютен, молоко"
+    },
+    {
+      "category": "Пиво разливное",
+      "name": "Ячменный лагер (The Бык)",
+      "description": "Amber Lager, собственный сорт. 0,5 л",
+      "price": 390,
+      "image": "images/menu/pivo_razlivnoe/yachmennyy_lager.jpg",
+      "allergens": "глютен"
+    },
+    {
+      "category": "Пиво разливное",
+      "name": "Сидр «Мяско»",
+      "description": "Фруктовый сидр из яблок и груш. 0,5 л",
+      "price": 420,
+      "image": "images/menu/pivo_razlivnoe/sidr_myasko.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Пиво разливное",
+      "name": "Velkopopovický Kozel Černý",
+      "description": "Тёмный чешский лагер. 0,5 л",
+      "price": 380,
+      "image": "images/menu/pivo_razlivnoe/kozel_cerny.jpg",
+      "allergens": "глютен"
+    },
+    {
+      "category": "Пиво разливное",
+      "name": "Hoegaarden",
+      "description": "Пшеничное нефильтрованное, Бельгия. 0,5 л",
+      "price": 450,
+      "image": "images/menu/pivo_razlivnoe/hoegaarden.jpg",
+      "allergens": "глютен"
+    },
+    {
+      "category": "Пиво разливное",
+      "name": "Gösser",
+      "description": "Светлый австрийский лагер. 0,5 л",
+      "price": 390,
+      "image": "images/menu/pivo_razlivnoe/gosser.jpg",
+      "allergens": "глютен"
+    },
+    {
+      "category": "Пиво разливное",
+      "name": "Stout «Мясной»",
+      "description": "Плотный стаут с кофейными нотами. 0,5 л",
+      "price": 480,
+      "image": "images/menu/pivo_razlivnoe/stout_myasnoy.jpg",
+      "allergens": "глютен"
+    },
+    {
+      "category": "Пиво разливное",
+      "name": "Крафт IPA «Хмельной Бык»",
+      "description": "Двойной охмеленный, цитрусовый. 0,5 л",
+      "price": 520,
+      "image": "images/menu/pivo_razlivnoe/kraft_ipa.jpg",
+      "allergens": "глютен"
+    },
+    {
+      "category": "Пиво разливное",
+      "name": "Zatecky Gus",
+      "description": "Чешский светлый лагер. 0,5 л",
+      "price": 360,
+      "image": "images/menu/pivo_razlivnoe/zatecky_gus.jpg",
+      "allergens": "глютен"
+    },
+    {
+      "category": "Фирменные коктейли",
+      "name": "«Кровавый стейк»",
+      "description": "Текила Reposado, клубничный ликер, лайм, табаско. 150 мл",
+      "price": 690,
+      "image": "images/menu/kokteyli/krovavyy_steyk.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Фирменные коктейли",
+      "name": "«Мужской разговор»",
+      "description": "Бурбон Woodford Reserve, вермут, биттер. 120 мл",
+      "price": 790,
+      "image": "images/menu/kokteyli/muzhskoy_razgovor.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Фирменные коктейли",
+      "name": "«Мясная симфония»",
+      "description": "Chivas Regal 12, красный вермут, ангостура. 120 мл",
+      "price": 850,
+      "image": "images/menu/kokteyli/myasnaya_simfoniya.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Фирменные коктейли",
+      "name": "«Пряный бык»",
+      "description": "Ром Havana 7, имбирный ликер, халапеньо. 150 мл",
+      "price": 690,
+      "image": "images/menu/kokteyli/pryanyy_byk.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Фирменные коктейли",
+      "name": "«Дымок от гриля»",
+      "description": "Laphroaig Select, мёд, розмарин. 120 мл",
+      "price": 890,
+      "image": "images/menu/kokteyli/dymok_ot_grilya.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Фирменные коктейли",
+      "name": "Old Fashioned",
+      "description": "Бурбон, сахар, биттер, апельсин. 100 мл",
+      "price": 690,
+      "image": "images/menu/kokteyli/old_fashioned.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Фирменные коктейли",
+      "name": "Manhattan",
+      "description": "Ржаной виски, красный вермут, ангостура. 100 мл",
+      "price": 690,
+      "image": "images/menu/kokteyli/manhattan.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Фирменные коктейли",
+      "name": "Negroni",
+      "description": "Джин, Campari, красный вермут. 120 мл",
+      "price": 650,
+      "image": "images/menu/kokteyli/negroni.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Фирменные коктейли",
+      "name": "Moscow Mule",
+      "description": "Водка, имбирное пиво, лайм, мята. 250 мл",
+      "price": 590,
+      "image": "images/menu/kokteyli/moscow_mule.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Фирменные коктейли",
+      "name": "Mojito «Мясной»",
+      "description": "Белый ром, мята, лайм + беконная стружка. 250 мл",
+      "price": 620,
+      "image": "images/menu/kokteyli/mojito_myasnoy.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Фирменные коктейли",
+      "name": "Espresso Martini",
+      "description": "Водка, ликер Kahlua, эспрессо. 150 мл",
+      "price": 650,
+      "image": "images/menu/kokteyli/espresso_martini.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Крепкий алкоголь",
+      "name": "Jack Daniel's Old No.7",
+      "description": "Теннесси виски. 50 мл",
+      "price": 450,
+      "image": "images/menu/krepky_alkogol/jack_daniels.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Крепкий алкоголь",
+      "name": "Jameson",
+      "description": "Ирландский виски. 50 мл",
+      "price": 420,
+      "image": "images/menu/krepky_alkogol/jameson.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Крепкий алкоголь",
+      "name": "Johnnie Walker Black Label",
+      "description": "Шотландский купажированный виски. 50 мл",
+      "price": 590,
+      "image": "images/menu/krepky_alkogol/johnnie_walker_black.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Крепкий алкоголь",
+      "name": "Chivas Regal 12",
+      "description": "Выдержанный шотландский виски. 50 мл",
+      "price": 620,
+      "image": "images/menu/krepky_alkogol/chivas_regal_12.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Крепкий алкоголь",
+      "name": "Jim Beam Bourbon",
+      "description": "Кентуккийский бурбон. 50 мл",
+      "price": 420,
+      "image": "images/menu/krepky_alkogol/jim_beam.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Крепкий алкоголь",
+      "name": "Wild Turkey 101",
+      "description": "Бурбон высокой крепости. 50 мл",
+      "price": 550,
+      "image": "images/menu/krepky_alkogol/wild_turkey_101.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Крепкий алкоголь",
+      "name": "Laphroaig Select",
+      "description": "Односолодовый шотландский виски с торфяным ароматом. 50 мл",
+      "price": 690,
+      "image": "images/menu/krepky_alkogol/laphroaig_select.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Крепкий алкоголь",
+      "name": "Beluga Noble (водка)",
+      "description": "Премиальная русская водка. 50 мл",
+      "price": 490,
+      "image": "images/menu/krepky_alkogol/beluga_noble.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Крепкий алкоголь",
+      "name": "Belvedere (водка)",
+      "description": "Польская водка класса люкс. 50 мл",
+      "price": 550,
+      "image": "images/menu/krepky_alkogol/belvedere.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Крепкий алкоголь",
+      "name": "Russian Standard (водка)",
+      "description": "Классическая водка премиум. 50 мл",
+      "price": 350,
+      "image": "images/menu/krepky_alkogol/russian_standard.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Крепкий алкоголь",
+      "name": "Grey Goose (водка)",
+      "description": "Французская водка из отборной пшеницы. 50 мл",
+      "price": 590,
+      "image": "images/menu/krepky_alkogol/grey_goose.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Крепкий алкоголь",
+      "name": "Bacardi Carta Blanca (ром)",
+      "description": "Белый ром. 50 мл",
+      "price": 380,
+      "image": "images/menu/krepky_alkogol/bacardi_blanca.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Крепкий алкоголь",
+      "name": "Bacardi Carta Negra (ром)",
+      "description": "Тёмный ром. 50 мл",
+      "price": 420,
+      "image": "images/menu/krepky_alkogol/bacardi_negra.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Крепкий алкоголь",
+      "name": "Havana Club 7 años (ром)",
+      "description": "Выдержанный кубинский ром. 50 мл",
+      "price": 520,
+      "image": "images/menu/krepky_alkogol/havana_club_7.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Крепкий алкоголь",
+      "name": "Olmeca Altos Plata (текила)",
+      "description": "Серебряная текила. 50 мл",
+      "price": 450,
+      "image": "images/menu/krepky_alkogol/olmeca_plata.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Крепкий алкоголь",
+      "name": "Olmeca Altos Reposado (текила)",
+      "description": "Отдохнувшая текила. 50 мл",
+      "price": 490,
+      "image": "images/menu/krepky_alkogol/olmeca_reposado.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Настойки и ликёры",
+      "name": "Хреновуха «Мясная» (домашняя)",
+      "description": "Настойка на хрене с липовым мёдом. 50 мл",
+      "price": 290,
+      "image": "images/menu/nastoyki_i_likery/hrenovuha_myasnaya.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Настойки и ликёры",
+      "name": "Клюквенная настойка",
+      "description": "Сладкая настойка на клюкве и пряностях. 50 мл",
+      "price": 260,
+      "image": "images/menu/nastoyki_i_likery/klyukvennaya_nastoyka.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Настойки и ликёры",
+      "name": "Baileys",
+      "description": "Сливочный ликёр. 50 мл",
+      "price": 390,
+      "image": "images/menu/nastoyki_i_likery/baileys.jpg",
+      "allergens": "молоко"
+    },
+    {
+      "category": "Настойки и ликёры",
+      "name": "Jägermeister",
+      "description": "Немецкий травяной ликёр. 50 мл",
+      "price": 380,
+      "image": "images/menu/nastoyki_i_likery/jagermeister.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Вина",
+      "name": "Chianti Classico DOCG (кр. сух.)",
+      "description": "Италия, Тоскана. Бокал 150 мл",
+      "price": 590,
+      "image": "images/menu/vina/chianti_classico.jpg",
+      "allergens": "сульфиты"
+    },
+    {
+      "category": "Вина",
+      "name": "Malbec Reserva (кр. сух.)",
+      "description": "Аргентина, Мендоса. Бокал 150 мл",
+      "price": 620,
+      "image": "images/menu/vina/malbec_reserva.jpg",
+      "allergens": "сульфиты"
+    },
+    {
+      "category": "Вина",
+      "name": "Cabernet Sauvignon (кр. сух.)",
+      "description": "Чили, Центральная долина. Бокал 150 мл",
+      "price": 550,
+      "image": "images/menu/vina/cabernet_sauvignon.jpg",
+      "allergens": "сульфиты"
+    },
+    {
+      "category": "Вина",
+      "name": "Киндзмараули (кр. полусл.)",
+      "description": "Грузия, Кахетия. Бокал 150 мл",
+      "price": 580,
+      "image": "images/menu/vina/kindzmarauli.jpg",
+      "allergens": "сульфиты"
+    },
+    {
+      "category": "Вина",
+      "name": "Saperavi (кр. сух.)",
+      "description": "Грузия, Кахетия. Бокал 150 мл",
+      "price": 550,
+      "image": "images/menu/vina/saperavi.jpg",
+      "allergens": "сульфиты"
+    },
+    {
+      "category": "Вина",
+      "name": "Rioja Crianza (кр. сух.)",
+      "description": "Испания, Риоха. Бокал 150 мл",
+      "price": 650,
+      "image": "images/menu/vina/rioja_crianza.jpg",
+      "allergens": "сульфиты"
+    },
+    {
+      "category": "Вина",
+      "name": "Sauvignon Blanc (бел. сух.)",
+      "description": "Новая Зеландия, Мальборо. Бокал 150 мл",
+      "price": 520,
+      "image": "images/menu/vina/sauvignon_blanc.jpg",
+      "allergens": "сульфиты"
+    },
+    {
+      "category": "Вина",
+      "name": "Chardonnay (бел. сух.)",
+      "description": "Франция, Бургундия. Бокал 150 мл",
+      "price": 550,
+      "image": "images/menu/vina/chardonnay.jpg",
+      "allergens": "сульфиты"
+    },
+    {
+      "category": "Вина",
+      "name": "Rkatsiteli (бел. сух.)",
+      "description": "Грузия, Кахетия. Бокал 150 мл",
+      "price": 480,
+      "image": "images/menu/vina/rkatsiteli.jpg",
+      "allergens": "сульфиты"
+    },
+    {
+      "category": "Вина",
+      "name": "Pinot Grigio (бел. сух.)",
+      "description": "Италия, Венето. Бокал 150 мл",
+      "price": 490,
+      "image": "images/menu/vina/pinot_grigio.jpg",
+      "allergens": "сульфиты"
+    },
+    {
+      "category": "Вина",
+      "name": "Prosecco DOC (игристое)",
+      "description": "Италия, Венето. Бокал 150 мл",
+      "price": 480,
+      "image": "images/menu/vina/prosecco_doc.jpg",
+      "allergens": "сульфиты"
+    },
+    {
+      "category": "Вина",
+      "name": "Советское шампанское п/сл",
+      "description": "Россия, классическое игристое. Бокал 150 мл",
+      "price": 390,
+      "image": "images/menu/vina/sovetskoe_shampanskoe.jpg",
+      "allergens": "сульфиты"
+    },
+    {
+      "category": "Безалкогольные напитки",
+      "name": "Лимонад «Мятный бык»",
+      "description": "Освежающий лимонад с мятой и лаймом. 0,5 л",
+      "price": 320,
+      "image": "images/menu/bezalkogolnye_napitki/limonad_myatnyy_byk.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Безалкогольные напитки",
+      "name": "Лимонад «Ягодный стейк»",
+      "description": "Микс лесных ягод и малины. 0,5 л",
+      "price": 360,
+      "image": "images/menu/bezalkogolnye_napitki/limonad_yagodnyy_steyk.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Безалкогольные напитки",
+      "name": "Лимонад «Огурец и розмарин»",
+      "description": "Свежий огурец, розмарин, тоник. 0,5 л",
+      "price": 320,
+      "image": "images/menu/bezalkogolnye_napitki/limonad_ogurets_i_rozmarin.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Безалкогольные напитки",
+      "name": "Морс клюквенный",
+      "description": "Домашний морс из клюквы. 0,5 л",
+      "price": 280,
+      "image": "images/menu/bezalkogolnye_napitki/mors_klyukvennyy.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Безалкогольные напитки",
+      "name": "Квас домашний",
+      "description": "Традиционный русский квас на ржаном хлебе. 0,5 л",
+      "price": 250,
+      "image": "images/menu/bezalkogolnye_napitki/kvas_domashniy.jpg",
+      "allergens": "глютен"
+    },
+    {
+      "category": "Безалкогольные напитки",
+      "name": "Тархун собственного производства",
+      "description": "Натуральный тархун на эстрагоне. 0,5 л",
+      "price": 290,
+      "image": "images/menu/bezalkogolnye_napitki/tarhun.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Безалкогольные напитки",
+      "name": "Дюшес собственного производства",
+      "description": "Грушевый лимонад. 0,5 л",
+      "price": 290,
+      "image": "images/menu/bezalkogolnye_napitki/dyushes.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Горячие напитки",
+      "name": "Чай чёрный / зелёный",
+      "description": "Крупнолистовой чай в чайнике. 500 мл",
+      "price": 250,
+      "image": "images/menu/goryachie_napitki/chay.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Горячие напитки",
+      "name": "Кофе эспрессо",
+      "description": "Классический эспрессо. 30 мл",
+      "price": 220,
+      "image": "images/menu/goryachie_napitki/espresso.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Горячие напитки",
+      "name": "Кофе американо",
+      "description": "Эспрессо с горячей водой. 150 мл",
+      "price": 240,
+      "image": "images/menu/goryachie_napitki/americano.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Горячие напитки",
+      "name": "Капучино",
+      "description": "Эспрессо с молочной пеной. 200 мл",
+      "price": 290,
+      "image": "images/menu/goryachie_napitki/cappuccino.jpg",
+      "allergens": "молоко"
+    },
+    {
+      "category": "Горячие напитки",
+      "name": "Латте",
+      "description": "Эспрессо с большим количеством молока. 250 мл",
+      "price": 310,
+      "image": "images/menu/goryachie_napitki/latte.jpg",
+      "allergens": "молоко"
+    },
+    {
+      "category": "Горячие напитки",
+      "name": "Раф кофе",
+      "description": "Нежный кофе со сливками и ванилью. 200 мл",
+      "price": 330,
+      "image": "images/menu/goryachie_napitki/raf.jpg",
+      "allergens": "молоко"
+    },
+    {
+      "category": "Горячие напитки",
+      "name": "Глинтвейн",
+      "description": "Красное вино с пряностями. 250 мл",
+      "price": 450,
+      "image": "images/menu/goryachie_napitki/glintveyn.jpg",
+      "allergens": "сульфиты"
+    },
+    {
+      "category": "Сыто-пьяно спецпредложения",
+      "name": "Стейк + Вино",
+      "description": "Любой стейк (300 г) + бокал красного сухого. Выгодное предложение",
+      "price": 1990,
+      "image": "images/menu/specpredlozheniya/steyk_i_vino.jpg",
+      "allergens": "зависит от выбора"
+    },
+    {
+      "category": "Сыто-пьяно спецпредложения",
+      "name": "Двойное мясо + Пиво",
+      "description": "Два любых стейка (по 200 г) + литр пива на выбор. Для настоящих мясоедов",
+      "price": 2690,
+      "image": "images/menu/specpredlozheniya/dvoynoe_myaso_pivo.jpg",
+      "allergens": "глютен (пиво)"
+    },
+    {
+      "category": "Сыто-пьяно спецпредложения",
+      "name": "Компания 4-х быков",
+      "description": "Томагавк (700 г) + 4 бокала красного вина + 4 соуса. Идеально для компании",
+      "price": 4990,
+      "image": "images/menu/specpredlozheniya/kompaniya_4_bykov.jpg",
+      "allergens": "сульфиты"
+    },
+    {
+      "category": "Сыто-пьяно спецпредложения",
+      "name": "Сытный ланч",
+      "description": "Бургер + картофель фри + 0,5 л пива/лимонада. Быстро и сытно",
+      "price": 1290,
+      "image": "images/menu/specpredlozheniya/sytnyy_lanch.jpg",
+      "allergens": "глютен"
+    },
+    {
+      "category": "Сыто-пьяно спецпредложения",
+      "name": "«Литр во имя мяса»",
+      "description": "Красное сухое вино (1 л). Для ценителей",
+      "price": 1590,
+      "image": "images/menu/specpredlozheniya/litr_vo_imya_myasa.jpg",
+      "allergens": "сульфиты"
+    },
+    {
+      "category": "Сыто-пьяно спецпредложения",
+      "name": "«Бочка быка»",
+      "description": "4 сорта пива (4×0,5 л). Дегустационный сет",
+      "price": 1490,
+      "image": "images/menu/specpredlozheniya/bochka_byka.jpg",
+      "allergens": "глютен"
+    },
+    {
+      "category": "Сыто-пьяно спецпредложения",
+      "name": "«Пьяный мясник»",
+      "description": "Трипл виски (Jack, Jameson, Johnnie Black) по 50 мл. Для крепких духом",
+      "price": 1290,
+      "image": "images/menu/specpredlozheniya/pyanyy_myasnik.jpg",
+      "allergens": "нет"
+    },
+    {
+      "category": "Сыто-пьяно спецпредложения",
+      "name": "«Самогон-тейка»",
+      "description": "Самогон на кедровых орешках (100 мл). Эксклюзив от ресторана",
+      "price": 490,
+      "image": "images/menu/specpredlozheniya/samogon_teyka.jpg",
+      "allergens": "нет"
+    }
+  ],
+  "users": [
+    {
+      "first_name": "Иван",
+      "last_name": "Иванов",
+      "phone": "+79161234567",
+      "email": "ivan@mail.com",
+      "password": "123",
+      "role": "user",
+      "bonus_points": 100
+    }
+  ],
+  "tables": [
+    {"capacity": 2, "location": "Окно"},
+    {"capacity": 2, "location": "Окно"},
+    {"capacity": 2, "location": "Окно"},
+    {"capacity": 2, "location": "Окно"},
+    {"capacity": 2, "location": "Окно"},
+    {"capacity": 2, "location": "Окно"},
+    {"capacity": 2, "location": "Окно"},
+    {"capacity": 2, "location": "Окно"},
+    {"capacity": 2, "location": "Окно"},
+    {"capacity": 2, "location": "Окно"},
+    {"capacity": 2, "location": "Окно"},
+    {"capacity": 2, "location": "Окно"},
+    {"capacity": 2, "location": "Окно"},
+    {"capacity": 2, "location": "Окно"},
+    {"capacity": 2, "location": "Окно"},
+    {"capacity": 2, "location": "Окно"},
+    {"capacity": 4, "location": "Центр"},
+    {"capacity": 4, "location": "Центр"},
+    {"capacity": 4, "location": "Центр"},
+    {"capacity": 4, "location": "Центр"},
+    {"capacity": 4, "location": "Центр"},
+    {"capacity": 4, "location": "Центр"},
+    {"capacity": 4, "location": "Центр"},
+    {"capacity": 4, "location": "Центр"},
+    {"capacity": 4, "location": "Центр"},
+    {"capacity": 4, "location": "Центр"},
+    {"capacity": 4, "location": "Центр"},
+    {"capacity": 4, "location": "Центр"},
+    {"capacity": 6, "location": "Стена"},
+    {"capacity": 6, "location": "Стена"},
+    {"capacity": 6, "location": "Стена"},
+    {"capacity": 6, "location": "Стена"},
+    {"capacity": 6, "location": "Стена"},
+    {"capacity": 6, "location": "Стена"},
+    {"capacity": 6, "location": "Стена"},
+    {"capacity": 6, "location": "Стена"},
+    {"capacity": 6, "location": "Стена"},
+    {"capacity": 6, "location": "Стена"},
+    {"capacity": 8, "location": "ВИП-зона"},
+    {"capacity": 8, "location": "ВИП-зона"},
+    {"capacity": 8, "location": "ВИП-зона"},
+    {"capacity": 8, "location": "ВИП-зона"},
+    {"capacity": 10, "location": "Малый зал"},
+    {"capacity": 2, "location": "Терраса"},
+    {"capacity": 2, "location": "Терраса"},
+    {"capacity": 2, "location": "Терраса"},
+    {"capacity": 2, "location": "Терраса"},
+    {"capacity": 4, "location": "Терраса"},
+    {"capacity": 4, "location": "Терраса"},
+    {"capacity": 4, "location": "Терраса"},
+    {"capacity": 4, "location": "Терраса"}
+  ]
+}

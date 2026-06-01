@@ -1,0 +1,28 @@
+/* admin_style.css */
+.admin-wrapper {
+  display: flex;
+  min-height: 80vh;
+}
+.admin-sidebar {
+  width: 250px;
+  background: #3a2c1e;
+  color: #fff;
+  padding: 1rem;
+}
+.admin-sidebar ul { list-style: none; }
+.admin-sidebar a { color: #dbd8c1; display: block; padding: 0.5rem 0; }
+.admin-content {
+  flex: 1;
+  padding: 1.5rem;
+  background: #f9f6f0;
+}
+
+@media (max-width: 768px) {
+  .admin-wrapper {
+    flex-direction: column;
+  }
+  .admin-sidebar {
+    width: 100%;
+    padding: 0.5rem;
+  }
+}

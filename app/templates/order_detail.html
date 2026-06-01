@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Заказ №{{ order.id }}</h2>
+<p>Статус:
+    {% if order.status == 'created' %}Создан
+    {% elif order.status == 'paid' %}Оплачен
+    {% elif order.status == 'in_progress' %}В работе
+    {% elif order.status == 'completed' %}Завершён
+    {% elif order.status == 'cancelled' %}Отменён
+    {% else %}{{ order.status }}{% endif %}
+</p>
+<p>Сумма: {{ order.total_price }} ₽</p>
+{% if order.bonus_used %} <p>Оплачено бонусами: {{ order.bonus_used }} ₽</p> {% endif %}
+<p>Способ оплаты: {% if order.payment_method == 'card' %}Карта{% elif order.payment_method == 'sbp' %}СБП{% else %}{{ order.payment_method }}{% endif %}</p>
+<ul>
+{% for item in items %}
+    <li style="display:flex; align-items:center; gap:10px;">
+        {% if item.image %}
+            <img src="{{ url_for('static', filename=item.image) if not item.image.startswith('http') else item.image }}" width="50" height="50" style="object-fit:cover; border-radius:5px;">
+        {% endif %}
+        {{ item.name }} x {{ item.quantity }} = {{ item.price * item.quantity }} ₽
+    </li>
+{% endfor %}
+</ul>
+<a href="{{ url_for('profile') }}">К моим заказам</a>
+{% endblock %}

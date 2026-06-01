@@ -1,0 +1,43 @@
+{% extends "admin_base.html" %}
+{% block admin_content %}
+<h2>Управление меню</h2>
+<form method="POST" action="{{ url_for('admin_add_menu') }}" enctype="multipart/form-data">
+    {{ add_form.hidden_tag() }}
+    <h4>Добавить блюдо</h4>
+    {{ add_form.name(placeholder="Название") }}<br>
+    {{ add_form.price(placeholder="Цена", step="0.01") }}<br>
+    {{ add_form.category_id.label }} {{ add_form.category_id }}<br>
+    {{ add_form.description(placeholder="Описание") }}<br>
+    {{ add_form.available.label }} {{ add_form.available }}<br>
+    {{ add_form.image_file.label }} {{ add_form.image_file }}<br>
+    {{ add_form.image_url(placeholder="https://...") }}<br>
+    {{ add_form.submit(class="btn") }}
+</form>
+<hr>
+<table>
+    <tr><th>ID</th><th>Фото</th><th>Название</th><th>Цена</th><th>Кат.</th><th>Доступно</th><th>Действия</th></tr>
+    {% for item in items %}
+    <tr>
+        <td>{{ item.id }}</td>
+        <td>{% if item.image %}<img src="{{ url_for('static', filename=item.image) if not item.image.startswith('http') else item.image }}" height="40">{% endif %}</td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.price }} ₽</td>
+        <td>{{ item.cat_name }}</td>
+        <td>{{ 'Да' if item.available else 'Нет' }}</td>
+        <td>
+            <a href="{{ url_for('admin_edit_menu', item_id=item.id) }}" class="btn btn-edit">✏️</a>
+            <form method="POST" action="{{ url_for('admin_toggle_menu', item_id=item.id) }}" style="display:inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+                <button class="btn btn-toggle">{{ 'Стоп' if item.available else 'Вкл.' }}</button>
+            </form>
+            {% if current_user.role == 'admin' %}
+            <form method="POST" action="{{ url_for('admin_delete_menu', item_id=item.id) }}" style="display:inline" onsubmit="return confirm('Удалить?')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+                <button class="btn btn-delete">🗑️</button>
+            </form>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
