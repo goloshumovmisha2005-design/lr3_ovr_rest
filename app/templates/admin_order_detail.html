@@ -1,60 +1,84 @@
 {% extends "admin_base.html" %}
 {% block admin_content %}
 <h2>Заказ №{{ order.id }}</h2>
-<p>Пользователь: {{ order.first_name }} {{ order.last_name }}</p>
-<p>Тип: {{ order.order_type }}, Статус:
-    {% if order.status == 'created' %}Создан
-    {% elif order.status == 'paid' %}Оплачен
-    {% elif order.status == 'in_progress' %}В работе
-    {% elif order.status == 'completed' %}Завершён
-    {% elif order.status == 'cancelled' %}Отменён
-    {% else %}{{ order.status }}{% endif %}
-</p>
-<form method="POST" action="{{ url_for('admin_order_detail', order_id=order.id) }}">
-    {{ status_form.hidden_tag() }}
-    {{ status_form.status() }}
-    {{ status_form.submit(class="btn") }}
-</form>
-<hr>
+<div class="order-info-panel">
+    <p><strong>Пользователь:</strong> {{ order.first_name }} {{ order.last_name }}</p>
+    <p><strong>Тип:</strong> {{ order.order_type }}</p>
+    <p><strong>Статус:</strong> <span class="status-badge status-{{ order.status }}">{{ order.status }}</span></p>
+    <form method="POST" class="inline-form">
+        {{ status_form.hidden_tag() }}
+        {{ status_form.status() }}
+        {{ status_form.submit(class="btn-small") }}
+    </form>
+</div>
+
 <h3>Позиции заказа</h3>
-<table>
-    <tr><th>Фото</th><th>Блюдо</th><th>Кол-во</th><th>Цена</th><th>Сумма</th><th>Действия</th></tr>
+<table class="admin-table">
+    <thead><tr><th>Фото</th><th>Блюдо</th><th>Кол-во</th><th>Цена</th><th>Сумма</th><th>Действия</th></tr></thead>
+    <tbody>
     {% for item in items %}
     <tr>
-        <td>
-            {% if item.image %}
-                <img src="{{ url_for('static', filename=item.image) if not item.image.startswith('http') else item.image }}" width="40" height="40" style="object-fit:cover; border-radius:4px;">
-            {% endif %}
-        </td>
+        <td>{% if item.image %}<img src="{{ url_for('static', filename=item.image) if not item.image.startswith('http') else item.image }}" width="40">{% endif %}</td>
         <td>{{ item.name }}</td>
         <td>{{ item.quantity }}</td>
         <td>{{ item.price }} ₽</td>
         <td>{{ item.quantity * item.price }} ₽</td>
-        <td>
-            <form method="POST" action="{{ url_for('admin_order_detail', order_id=order.id) }}" style="display:inline">
+        <td class="actions">
+            <form method="POST" style="display:inline">
                 {{ items_form.hidden_tag() }}
                 <input type="hidden" name="action" value="update">
                 <input type="hidden" name="update_item_id" value="{{ item.id }}">
                 <input type="number" name="new_quantity" value="{{ item.quantity }}" min="1" style="width:60px">
-                <button type="submit" class="btn">Изменить</button>
+                <button type="submit" class="btn-small">Изменить</button>
             </form>
-            <form method="POST" action="{{ url_for('admin_order_detail', order_id=order.id) }}" style="display:inline">
-                {{ items_form.hidden_tag() }}
+            <form method="POST" style="display:inline">
                 <input type="hidden" name="action" value="remove">
                 <input type="hidden" name="remove_item_id" value="{{ item.id }}">
-                <button type="submit" class="btn">Удалить</button>
+                <button type="submit" class="btn-small btn-danger">Удалить</button>
             </form>
         </td>
     </tr>
     {% endfor %}
+    </tbody>
 </table>
+
 <h3>Добавить блюдо</h3>
-<form method="POST" action="{{ url_for('admin_order_detail', order_id=order.id) }}">
+<form method="POST" class="inline-form">
     {{ items_form.hidden_tag() }}
     <input type="hidden" name="action" value="add">
     {{ items_form.menu_item_id() }}
-    <input type="number" name="quantity" value="1" min="1" style="width:60px">
-    <button type="submit" class="btn">Добавить</button>
+    <input type="number" name="quantity" value="1" min="1">
+    <button type="submit" class="btn-primary">Добавить</button>
 </form>
 <p><strong>Итого: {{ order.total_price }} ₽</strong></p>
+
+<style>
+.order-info-panel {
+    background: var(--black-40);
+    border-radius: 24px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+.status-badge {
+    display: inline-block;
+    padding: 2px 12px;
+    border-radius: 30px;
+    background: #333;
+    color: white;
+}
+.status-created { background: #f39c12; }
+.status-paid { background: #2ecc71; }
+.status-in_progress { background: #3498db; }
+.status-completed { background: #95a5a6; }
+.status-cancelled { background: #e74c3c; }
+.btn-small {
+    background: var(--accent);
+    border: none;
+    padding: 4px 12px;
+    border-radius: 30px;
+    color: white;
+    cursor: pointer;
+}
+.btn-danger { background: #c0392b; }
+</style>
 {% endblock %}

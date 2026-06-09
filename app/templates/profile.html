@@ -1,137 +1,405 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Личный кабинет</h2>
-<div class="profile-layout">
-    <!-- Сайдбар -->
-    <div class="profile-sidebar">
-        <a href="#bonus">Бонусы: {{ current_user.bonus_points }}</a>
-        <a href="{{ url_for('edit_profile') }}">Редактировать профиль</a>
-        <a href="#orders">Мои заказы</a>
-        <a href="#reservations">Мои бронирования</a>
-        <a href="#reviews">Мои отзывы</a>
-        <a href="#addresses">Адреса доставки</a>
-        <a href="#cards">Платёжные карты</a>
-        <a href="#allergens">Мои аллергены</a>
-    </div>
+<div class="profile-container">
+  <h2 class="profile-title">Личный кабинет</h2>
+  <div class="profile-layout">
+    <!-- Боковое меню -->
+    <aside class="profile-sidebar">
+      <div class="sidebar-bonus">
+        <span class="bonus-icon">🎁</span>
+        <div class="bonus-info">
+          <span class="bonus-label">Бонусы</span>
+          <span class="bonus-value">{{ current_user.bonus_points }}</span>
+        </div>
+      </div>
+      <nav class="profile-nav">
+        <a href="#bonus" class="nav-link" data-section="bonus">🎯 Бонусы</a>
+        <a href="#orders" class="nav-link" data-section="orders">📦 Заказы</a>
+        <a href="#reservations" class="nav-link" data-section="reservations">📅 Бронирования</a>
+        <a href="#reviews" class="nav-link" data-section="reviews">✍️ Отзывы</a>
+        <a href="#addresses" class="nav-link" data-section="addresses">🏠 Адреса</a>
+        <a href="#cards" class="nav-link" data-section="cards">💳 Карты</a>
+        <a href="#allergens" class="nav-link" data-section="allergens">⚠️ Аллергены</a>
+        <a href="{{ url_for('edit_profile') }}" class="nav-link">⚙️ Редактировать профиль</a>
+      </nav>
+    </aside>
 
     <!-- Основной контент -->
-    <div class="profile-content">
-        <div id="bonus">
-            <p>Баланс бонусов: {{ current_user.bonus_points }}</p>
-            <a href="{{ url_for('edit_profile') }}" class="btn">Редактировать профиль</a>
+    <main class="profile-content">
+      <!-- Бонусы -->
+      <section id="bonus" class="profile-section active">
+        <h3>Бонусный счёт</h3>
+        <div class="bonus-card">
+          <div class="bonus-balance">{{ current_user.bonus_points }} баллов</div>
+          <p>1 балл = 1 ₽. Можно использовать до 50% стоимости заказа.</p>
+          <a href="{{ url_for('edit_profile') }}" class="btn-small">Настройки профиля</a>
         </div>
+      </section>
 
-        <hr>
-        <div id="orders">
-            <h3>Мои заказы</h3>
-            {% for order in orders %}
-            <div class="order-row">
-                <span>Заказ №{{ order.id }} — {{ order.total_price }} ₽ (
-                    {% if order.status == 'created' %}Создан
-                    {% elif order.status == 'paid' %}Оплачен
-                    {% elif order.status == 'in_progress' %}В работе
-                    {% elif order.status == 'completed' %}Завершён
-                    {% elif order.status == 'cancelled' %}Отменён
-                    {% else %}{{ order.status }}{% endif %}
-                )</span>
-                <a href="{{ url_for('order_detail', order_id=order.id) }}" class="btn">Детали</a>
-                {% if order.status == 'paid' %}
-                <form method="POST" action="{{ url_for('cancel_order', order_id=order.id) }}" style="display:inline">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
-                    <button type="submit" class="btn" onclick="return confirm('Отменить заказ №{{ order.id }}?')">Отменить</button>
-                </form>
+      <!-- Заказы -->
+      <section id="orders" class="profile-section">
+        <h3>Мои заказы</h3>
+        {% if orders %}
+          {% for order in orders %}
+          <div class="order-card">
+            <div class="order-header">
+              <span class="order-id">Заказ №{{ order.id }}</span>
+              <span class="order-status status-{{ order.status }}">{{ order.status|capitalize }}</span>
+            </div>
+            <div class="order-info">
+              <span>{{ order.total_price }} ₽</span>
+              <span>
+                {# Безопасное отображение даты #}
+                {% if order.created_at %}
+                  {% if order.created_at is string %}
+                    {{ order.created_at[:10] if order.created_at|length >= 10 else order.created_at }}
+                  {% else %}
+                    {{ order.created_at.strftime('%d.%m.%Y') }}
+                  {% endif %}
                 {% endif %}
+              </span>
             </div>
-            {% endfor %}
-        </div>
+            <div class="order-actions">
+              <a href="{{ url_for('order_detail', order_id=order.id) }}" class="btn-outline">Детали</a>
+              {% if order.status == 'paid' %}
+              <form method="POST" action="{{ url_for('cancel_order', order_id=order.id) }}" style="display:inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+                <button type="submit" class="btn-danger" onclick="return confirm('Отменить заказ №{{ order.id }}?')">Отменить</button>
+              </form>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p>У вас пока нет заказов.</p>
+        {% endif %}
+      </section>
 
-        <div id="reservations">
-            <h3>Мои бронирования</h3>
-            {% for res in reservations %}
-            <div class="reservation-row">
-                <span>{{ res.date }} {{ res.start_time or '—' }} - {{ res.end_time or '—' }}, {{ res.guests }} чел. (
-                    {% if res.status == 'active' %}Активна
-                    {% elif res.status == 'cancelled' %}Отменена
-                    {% else %}{{ res.status }}{% endif %}
-                )</span>
-                {% if res.status == 'active' %}
-                <a href="{{ url_for('edit_reservation', res_id=res.id) }}" class="btn">Редактировать</a>
-                <form method="POST" action="{{ url_for('cancel_reservation', res_id=res.id) }}" style="display:inline">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
-                    <button type="submit" class="btn" onclick="return confirm('Отменить бронь на {{ res.date }}?')">Отменить</button>
-                </form>
+      <!-- Бронирования -->
+      <section id="reservations" class="profile-section">
+        <h3>Мои бронирования</h3>
+        {% if reservations %}
+          {% for res in reservations %}
+          <div class="reservation-card">
+            <div class="reservation-date">{{ res.date }}</div>
+            <div class="reservation-time">{{ res.start_time }} – {{ res.end_time }}</div>
+            <div class="reservation-guests">{{ res.guests }} гостей</div>
+            <div class="reservation-status status-{{ res.status }}">{{ res.status }}</div>
+            <div class="reservation-actions">
+              {% if res.status == 'active' %}
+              <a href="{{ url_for('edit_reservation', res_id=res.id) }}" class="btn-outline">Изменить</a>
+              <form method="POST" action="{{ url_for('cancel_reservation', res_id=res.id) }}" style="display:inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+                <button type="submit" class="btn-danger" onclick="return confirm('Отменить бронь?')">Отменить</button>
+              </form>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p>У вас нет активных бронирований.</p>
+        {% endif %}
+      </section>
+
+      <!-- Отзывы -->
+      <section id="reviews" class="profile-section">
+        <h3>Мои отзывы</h3>
+        {% if my_reviews %}
+          {% for rev in my_reviews %}
+          <div class="review-mini">
+            <strong>{{ rev.name }}</strong> ({{ rev.rating }}/5)
+            <p>{{ rev.text }}</p>
+            <small>
+              {% if rev.created_at %}
+                {% if rev.created_at is string %}
+                  {{ rev.created_at[:10] if rev.created_at|length >= 10 else rev.created_at }}
+                {% else %}
+                  {{ rev.created_at.strftime('%d.%m.%Y') }}
                 {% endif %}
-            </div>
-            {% endfor %}
-        </div>
+              {% endif %}
+            </small>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p>Вы ещё не оставляли отзывы.</p>
+        {% endif %}
+      </section>
 
-        <hr>
-        <div id="reviews">
-            <h3>Мои отзывы</h3>
-            {% for rev in my_reviews %}
-            <div>
-              <strong>{{ rev.name }}</strong> ({{ rev.rating }}/5) – {{ rev.text }}
-              <small>{{ rev.created_at }}</small>
-            </div>
-            {% else %}
-            <p>Нет отзывов</p>
-            {% endfor %}
-        </div>
-
-        <hr>
-        <div id="addresses">
-            <h3>Адреса доставки</h3>
-            {% for addr in addresses %}
-            <div>
-              {{ addr.address }}
-              <form method="POST" action="{{ url_for('delete_address', addr_id=addr.id) }}" style="display:inline">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
-                <button type="submit" class="btn" onclick="return confirm('Удалить адрес {{ addr.address }}?')">Удалить</button>
-              </form>
-            </div>
-            {% endfor %}
-            <form method="POST" action="{{ url_for('add_address') }}" style="margin-top:10px;">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
-                <input type="text" name="address" placeholder="Новый адрес" required>
-                <button type="submit" class="btn">Добавить</button>
+      <!-- Адреса -->
+      <section id="addresses" class="profile-section">
+        <h3>Адреса доставки</h3>
+        <ul class="list-manage">
+          {% for addr in addresses %}
+          <li>
+            <span>{{ addr.address }}</span>
+            <form method="POST" action="{{ url_for('delete_address', addr_id=addr.id) }}" style="display:inline">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+              <button type="submit" class="delete-icon" onclick="return confirm('Удалить адрес?')">✕</button>
             </form>
-        </div>
+          </li>
+          {% endfor %}
+        </ul>
+        <form method="POST" action="{{ url_for('add_address') }}" class="inline-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+          <input type="text" name="address" placeholder="Новый адрес" required>
+          <button type="submit" class="btn-add">+ Добавить</button>
+        </form>
+      </section>
 
-        <div id="cards">
-            <h3>Платёжные карты</h3>
-            {% for pm in payments %}
-            <div>
-              ****{{ pm.card_number }}
-              <form method="POST" action="{{ url_for('delete_payment', pay_id=pm.id) }}" style="display:inline">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
-                <button type="submit" class="btn" onclick="return confirm('Удалить карту ****{{ pm.card_number }}?')">Удалить</button>
-              </form>
-            </div>
-            {% endfor %}
-            <form method="POST" action="{{ url_for('add_payment') }}" style="margin-top:10px;">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
-                <input type="text" name="card_number" placeholder="Последние 4 цифры" required maxlength="4" pattern="[0-9]{4}">
-                <button type="submit" class="btn">Добавить</button>
+      <!-- Карты -->
+      <section id="cards" class="profile-section">
+        <h3>Платёжные карты</h3>
+        <ul class="list-manage">
+          {% for pm in payments %}
+          <li>
+            <span>**** {{ pm.card_number }}</span>
+            <form method="POST" action="{{ url_for('delete_payment', pay_id=pm.id) }}" style="display:inline">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+              <button type="submit" class="delete-icon">✕</button>
             </form>
-        </div>
+          </li>
+          {% endfor %}
+        </ul>
+        <form method="POST" action="{{ url_for('add_payment') }}" class="inline-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+          <input type="text" name="card_number" placeholder="Последние 4 цифры" maxlength="4" pattern="[0-9]{4}" required>
+          <button type="submit" class="btn-add">+ Добавить</button>
+        </form>
+      </section>
 
-        <div id="allergens">
-            <h3>Мои аллергены</h3>
-            {% for al in allergens %}
-            <div>
-              {{ al.allergen }}
-              <form method="POST" action="{{ url_for('delete_allergen', allergen_id=al.id) }}" style="display:inline">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
-                <button type="submit" class="btn" onclick="return confirm('Удалить аллерген {{ al.allergen }}?')">Удалить</button>
-              </form>
-            </div>
-            {% endfor %}
-            <form method="POST" action="{{ url_for('add_allergen') }}" style="margin-top:10px;">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
-                <input type="text" name="allergen" placeholder="Аллерген (напр. глютен)" required>
-                <button type="submit" class="btn">Добавить</button>
+      <!-- Аллергены -->
+      <section id="allergens" class="profile-section">
+        <h3>Мои аллергены</h3>
+        <ul class="list-manage">
+          {% for al in allergens %}
+          <li>
+            <span>{{ al.allergen }}</span>
+            <form method="POST" action="{{ url_for('delete_allergen', allergen_id=al.id) }}" style="display:inline">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+              <button type="submit" class="delete-icon">✕</button>
             </form>
-        </div>
-    </div>
+          </li>
+          {% endfor %}
+        </ul>
+        <form method="POST" action="{{ url_for('add_allergen') }}" class="inline-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+          <input type="text" name="allergen" placeholder="Аллерген (напр. глютен)" required>
+          <button type="submit" class="btn-add">+ Добавить</button>
+        </form>
+      </section>
+    </main>
+  </div>
 </div>
+
+<script>
+// Плавная навигация по разделам
+document.querySelectorAll('.nav-link[data-section]').forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    const sectionId = this.dataset.section;
+    document.querySelectorAll('.profile-section').forEach(section => {
+      section.classList.remove('active');
+    });
+    document.getElementById(sectionId).classList.add('active');
+    window.history.pushState(null, '', '#' + sectionId);
+  });
+});
+if(window.location.hash) {
+  const hash = window.location.hash.substring(1);
+  const target = document.getElementById(hash);
+  if(target) {
+    document.querySelectorAll('.profile-section').forEach(s => s.classList.remove('active'));
+    target.classList.add('active');
+  }
+}
+</script>
+
+<style>
+/* (все стили остаются без изменений – они уже были в предыдущем ответе) */
+.profile-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+.profile-title {
+  font-family: var(--font-heading);
+  font-size: 2.2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.profile-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+.profile-sidebar {
+  flex: 1;
+  min-width: 220px;
+  background: var(--black-40);
+  border-radius: 32px;
+  padding: 1.5rem;
+  align-self: start;
+  position: sticky;
+  top: 100px;
+}
+.sidebar-bonus {
+  background: var(--brown-dark);
+  border-radius: 24px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.bonus-icon {
+  font-size: 2rem;
+}
+.bonus-info {
+  display: flex;
+  flex-direction: column;
+}
+.bonus-label {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+.bonus-value {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: var(--accent);
+}
+.profile-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.nav-link {
+  padding: 0.6rem 1rem;
+  border-radius: 40px;
+  color: var(--beige-light);
+  text-decoration: none;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.nav-link:hover, .nav-link:active {
+  background: var(--accent);
+  color: var(--brown-dark);
+}
+.profile-content {
+  flex: 3;
+  background: var(--black-40);
+  border-radius: 32px;
+  padding: 1.8rem;
+}
+.profile-section {
+  display: none;
+}
+.profile-section.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.profile-section h3 {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  margin-bottom: 1.2rem;
+  border-left: 4px solid var(--accent);
+  padding-left: 1rem;
+}
+.bonus-card {
+  background: rgba(0,0,0,0.3);
+  border-radius: 24px;
+  padding: 1.5rem;
+  text-align: center;
+}
+.bonus-balance {
+  font-size: 2.5rem;
+  color: var(--accent);
+  font-weight: bold;
+}
+.order-card, .reservation-card {
+  background: rgba(0,0,0,0.3);
+  border-radius: 20px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+.order-header, .reservation-date {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+.status-paid, .status-active { color: #2ecc71; }
+.status-cancelled { color: #e74c3c; }
+.order-actions, .reservation-actions {
+  margin-top: 0.8rem;
+  display: flex;
+  gap: 0.8rem;
+}
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--accent);
+  padding: 4px 12px;
+  border-radius: 30px;
+  color: var(--beige-light);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.btn-danger {
+  background: #c0392b;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 30px;
+  color: white;
+  cursor: pointer;
+}
+.list-manage {
+  list-style: none;
+  padding: 0;
+}
+.list-manage li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(219,216,193,0.2);
+}
+.delete-icon {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.inline-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+.inline-form input {
+  flex: 2;
+  padding: 8px 12px;
+  border-radius: 30px;
+  border: none;
+  background: var(--beige-light);
+}
+.btn-add {
+  background: var(--accent);
+  border: none;
+  padding: 8px 18px;
+  border-radius: 30px;
+  color: white;
+  cursor: pointer;
+}
+@media (max-width: 768px) {
+  .profile-sidebar {
+    position: static;
+    width: 100%;
+  }
+  .profile-layout {
+    flex-direction: column;
+  }
+}
+</style>
 {% endblock %}

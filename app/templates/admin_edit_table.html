@@ -1,11 +1,12 @@
 {% extends "admin_base.html" %}
 {% block admin_content %}
 <h2>Редактировать стол №{{ table.id }}</h2>
-<form method="POST">
+<form method="POST" class="admin-form">
     {{ form.hidden_tag() }}
-    {{ form.capacity.label }} {{ form.capacity }}<br>
-    {{ form.location.label }} {{ form.location }}<br>
-    {{ form.active.label }} {{ form.active }}<br>
-    {{ form.submit(class="btn") }}
+    <div class="form-group">{{ form.capacity.label }} {{ form.capacity(class="form-control") }}</div>
+    <div class="form-group">{{ form.location.label }} {{ form.location(class="form-control") }}</div>
+    <div class="form-group">{{ form.active.label }} {{ form.active() }}</div>
+    {{ form.submit(class="btn-primary") }}
 </form>
+<!-- стили такие же, как в admin_edit_menu -->
 {% endblock %}

@@ -1,21 +1,31 @@
 {% extends "admin_base.html" %}
 {% block admin_content %}
 <h2>Управление меню</h2>
-<form method="POST" action="{{ url_for('admin_add_menu') }}" enctype="multipart/form-data">
-    {{ add_form.hidden_tag() }}
-    <h4>Добавить блюдо</h4>
-    {{ add_form.name(placeholder="Название") }}<br>
-    {{ add_form.price(placeholder="Цена", step="0.01") }}<br>
-    {{ add_form.category_id.label }} {{ add_form.category_id }}<br>
-    {{ add_form.description(placeholder="Описание") }}<br>
-    {{ add_form.available.label }} {{ add_form.available }}<br>
-    {{ add_form.image_file.label }} {{ add_form.image_file }}<br>
-    {{ add_form.image_url(placeholder="https://...") }}<br>
-    {{ add_form.submit(class="btn") }}
-</form>
-<hr>
-<table>
-    <tr><th>ID</th><th>Фото</th><th>Название</th><th>Цена</th><th>Кат.</th><th>Доступно</th><th>Действия</th></tr>
+
+<div class="add-form-card">
+    <h3>➕ Добавить блюдо</h3>
+    <form method="POST" action="{{ url_for('admin_add_menu') }}" enctype="multipart/form-data">
+        {{ add_form.hidden_tag() }}
+        <div class="form-row">
+            {{ add_form.name(placeholder="Название") }}
+            {{ add_form.price(placeholder="Цена", step="0.01") }}
+            {{ add_form.category_id() }}
+            {{ add_form.image_file() }}
+            {{ add_form.image_url(placeholder="URL фото") }}
+        </div>
+        <div class="form-row">
+            {{ add_form.description(placeholder="Описание") }}
+            <label>{{ add_form.available }} {{ add_form.available.label }}</label>
+            {{ add_form.submit(class="btn-primary") }}
+        </div>
+    </form>
+</div>
+
+<table class="admin-table">
+    <thead>
+        <tr><th>ID</th><th>Фото</th><th>Название</th><th>Цена</th><th>Кат.</th><th>Доступно</th><th>Действия</th></tr>
+    </thead>
+    <tbody>
     {% for item in items %}
     <tr>
         <td>{{ item.id }}</td>
@@ -24,20 +34,71 @@
         <td>{{ item.price }} ₽</td>
         <td>{{ item.cat_name }}</td>
         <td>{{ 'Да' if item.available else 'Нет' }}</td>
-        <td>
-            <a href="{{ url_for('admin_edit_menu', item_id=item.id) }}" class="btn btn-edit">✏️</a>
+        <td class="actions">
+            <a href="{{ url_for('admin_edit_menu', item_id=item.id) }}" class="btn-icon">✏️</a>
             <form method="POST" action="{{ url_for('admin_toggle_menu', item_id=item.id) }}" style="display:inline">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
-                <button class="btn btn-toggle">{{ 'Стоп' if item.available else 'Вкл.' }}</button>
+                <button class="btn-icon">{{ '⛔' if item.available else '✅' }}</button>
             </form>
             {% if current_user.role == 'admin' %}
             <form method="POST" action="{{ url_for('admin_delete_menu', item_id=item.id) }}" style="display:inline" onsubmit="return confirm('Удалить?')">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
-                <button class="btn btn-delete">🗑️</button>
+                <button class="btn-icon">🗑️</button>
             </form>
             {% endif %}
         </td>
     </tr>
     {% endfor %}
+    </tbody>
 </table>
+
+<style>
+.add-form-card {
+    background: var(--black-40);
+    border-radius: 24px;
+    padding: 1.2rem;
+    margin-bottom: 2rem;
+}
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    align-items: center;
+    margin-bottom: 0.8rem;
+}
+.form-row input, .form-row select {
+    padding: 6px 12px;
+    border-radius: 30px;
+    border: none;
+    background: var(--beige-light);
+}
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--black-40);
+    border-radius: 24px;
+    overflow: hidden;
+}
+.admin-table th, .admin-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid rgba(219,216,193,0.2);
+}
+.admin-table th {
+    background: var(--brown-dark);
+    font-family: var(--font-heading);
+}
+.actions {
+    display: flex;
+    gap: 6px;
+}
+.btn-icon {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--beige-light);
+}
+.btn-icon:hover { color: var(--accent); }
+</style>
 {% endblock %}

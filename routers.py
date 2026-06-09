@@ -18,7 +18,6 @@ def inject_csrf():
     return dict(csrf_token=generate_csrf, csrf_token_value=generate_csrf())
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Обеспечиваем существование папки для загрузок
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 login_manager = LoginManager()
@@ -105,7 +104,6 @@ def reservation():
     if form.validate_on_submit():
         show_map = True
     if request.method == 'POST' and request.form.get('table_id'):
-        # Обработка бронирования
         table_id = int(request.form['table_id'])
         d = form.date.data
         start = f"{form.start_hour.data}:{form.start_min.data}"
@@ -217,7 +215,6 @@ def add_to_cart():
 @app.route('/cart/set', methods=['POST'])
 @login_required
 def set_cart_quantity():
-    """Точно устанавливает количество товара в корзине (для формы в cart.html)"""
     item_id = request.form.get('item_id')
     quantity = int(request.form.get('quantity', 1))
     cart_cookie = request.cookies.get('cart', '{}')
@@ -506,7 +503,7 @@ def admin_dashboard():
         }
     return render_template('admin_dashboard.html', stats=stats)
 
-# Экспорт БД (SQLite файл) – было
+# Экспорт БД (SQLite файл)
 @app.route('/admin/export-database')
 @role_required('admin')
 def export_database():
@@ -536,7 +533,6 @@ def import_sqlite():
     if not file or not file.filename.endswith('.sqlite'):
         flash('Нужен файл .sqlite', 'error')
         return redirect(url_for('import_data'))
-    # Создаём резервную копию текущей БД
     backup_name = DATABASE + '.backup_' + str(int(time.time()))
     shutil.copy(DATABASE, backup_name)
     file.save(DATABASE)
@@ -805,8 +801,7 @@ def admin_tables():
 @login_required
 def edit_reservation(res_id):
     with get_db() as conn:
-        res = conn.execute("SELECT * FROM reservations WHERE id=? AND user_id=?",
-                           (res_id, current_user.id)).fetchone()
+        res = conn.execute("SELECT * FROM reservations WHERE id=? AND user_id=?", (res_id, current_user.id)).fetchone()
         if not res or res['status'] != 'active':
             flash('Бронь не найдена или уже не активна', 'error')
             return redirect(url_for('profile'))
@@ -822,11 +817,9 @@ def edit_reservation(res_id):
         new_start = form.start_time.data
         new_end = form.end_time.data
         new_guests = form.guests.data
-        # Проверка вместимости стола
         if new_guests > table['capacity']:
             flash(f'Стол вмещает не более {table["capacity"]} человек', 'error')
             return render_template('edit_reservation.html', form=form, reservation=res)
-        # Проверка конфликтов, исключая текущую бронь
         with get_db() as conn:
             conflict = conn.execute('''
                 SELECT id FROM reservations
@@ -929,7 +922,6 @@ def admin_view_table(table_name):
     per_page = 50
     offset = (page - 1) * per_page
     with get_db() as conn:
-        # Безопасная проверка: получаем список допустимых таблиц
         allowed_tables = [t['name'] for t in conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
         ).fetchall()]
@@ -993,6 +985,487 @@ def import_data():
         return redirect(url_for('admin_dashboard'))
     return render_template('admin_import.html', form=form)
 
+# ====================== REST API (для админ-консоли) ======================
+
+def _get_current_index(table_name, record_id):
+    """Возвращает порядковый номер (начиная с 1) записи с указанным ID (для совместимости со старыми модулями)"""
+    with get_db() as conn:
+        rows = conn.execute(f"SELECT id FROM {table_name} ORDER BY id").fetchall()
+    for idx, row in enumerate(rows, start=1):
+        if row['id'] == record_id:
+            return idx
+    return None
+
+# ----- Меню -----
+@app.route('/api/menu', methods=['GET'])
+def api_get_menu():
+    include_all = request.args.get('all', 'false').lower() == 'true'
+    with get_db() as conn:
+        if include_all:
+            items = conn.execute("SELECT * FROM menu_items ORDER BY category_id, id").fetchall()
+        else:
+            items = conn.execute("SELECT * FROM menu_items WHERE available=1 ORDER BY category_id, id").fetchall()
+    return jsonify([dict(row) for row in items])
+
+@app.route('/api/menu/<int:item_id>', methods=['GET'])
+def api_get_menu_item(item_id):
+    with get_db() as conn:
+        item = conn.execute("SELECT * FROM menu_items WHERE id=?", (item_id,)).fetchone()
+    if not item:
+        return jsonify({"error": "Блюдо не найдено"}), 404
+    return jsonify(dict(item))
+
+@app.route('/api/menu', methods=['POST'])
+@role_required('admin', 'manager')
+def api_create_menu_item():
+    data = request.get_json()
+    required = ['name', 'price', 'category_id']
+    if not all(k in data for k in required):
+        return jsonify({"error": "Не хватает полей: name, price, category_id"}), 422
+    with get_db() as conn:
+        cur = conn.execute(
+            "INSERT INTO menu_items (name, price, category_id, description, available, image) VALUES (?,?,?,?,?,?)",
+            (data['name'], data['price'], data['category_id'],
+             data.get('description', ''), int(data.get('available', True)),
+             data.get('image', ''))
+        )
+        conn.commit()
+        new_id = cur.lastrowid
+    with get_db() as conn:
+        new_item = conn.execute("SELECT * FROM menu_items WHERE id=?", (new_id,)).fetchone()
+    return jsonify(dict(new_item)), 201
+
+@app.route('/api/menu/<int:item_id>', methods=['PUT'])
+@role_required('admin', 'manager')
+def api_update_menu_item(item_id):
+    data = request.get_json()
+    with get_db() as conn:
+        existing = conn.execute("SELECT * FROM menu_items WHERE id=?", (item_id,)).fetchone()
+        if not existing:
+            return jsonify({"error": "Блюдо не найдено"}), 404
+        conn.execute(
+            "UPDATE menu_items SET name=?, price=?, category_id=?, description=?, available=?, image=? WHERE id=?",
+            (data.get('name', existing['name']),
+             data.get('price', existing['price']),
+             data.get('category_id', existing['category_id']),
+             data.get('description', existing['description']),
+             int(data.get('available', existing['available'])),
+             data.get('image', existing['image']),
+             item_id)
+        )
+        conn.commit()
+    with get_db() as conn:
+        updated = conn.execute("SELECT * FROM menu_items WHERE id=?", (item_id,)).fetchone()
+    return jsonify(dict(updated))
+
+@app.route('/api/menu/<int:item_id>', methods=['DELETE'])
+@role_required('admin', 'manager')
+def api_delete_menu_item(item_id):
+    with get_db() as conn:
+        existing = conn.execute("SELECT * FROM menu_items WHERE id=?", (item_id,)).fetchone()
+        if not existing:
+            return jsonify({"error": "Блюдо не найдено"}), 404
+        conn.execute("DELETE FROM menu_items WHERE id=?", (item_id,))
+        conn.commit()
+    return "", 204
+
+# ----- Категории -----
+@app.route('/api/categories', methods=['GET'])
+def api_get_categories():
+    with get_db() as conn:
+        cats = conn.execute("SELECT * FROM categories ORDER BY name").fetchall()
+    return jsonify([dict(c) for c in cats])
+
+# ----- Заказы -----
+@app.route('/api/orders', methods=['GET'])
+@login_required
+def api_get_orders():
+    if current_user.role in ('admin', 'manager'):
+        with get_db() as conn:
+            orders = conn.execute("SELECT * FROM orders ORDER BY created_at DESC").fetchall()
+    else:
+        with get_db() as conn:
+            orders = conn.execute("SELECT * FROM orders WHERE user_id=? ORDER BY created_at DESC", (current_user.id,)).fetchall()
+    return jsonify([dict(o) for o in orders])
+
+@app.route('/api/orders/<int:order_id>', methods=['GET'])
+@login_required
+def api_get_order(order_id):
+    with get_db() as conn:
+        order = conn.execute("SELECT * FROM orders WHERE id=?", (order_id,)).fetchone()
+        if not order:
+            return jsonify({"error": "Заказ не найден"}), 404
+        if order['user_id'] != current_user.id and current_user.role not in ('admin', 'manager'):
+            return jsonify({"error": "Нет доступа"}), 403
+        items = conn.execute(
+            "SELECT oi.*, mi.name FROM order_items oi JOIN menu_items mi ON oi.menu_item_id=mi.id WHERE oi.order_id=?",
+            (order_id,)
+        ).fetchall()
+    result = dict(order)
+    result['items'] = [dict(i) for i in items]
+    return jsonify(result)
+
+@app.route('/api/orders', methods=['POST'])
+@login_required
+def api_create_order():
+    data = request.get_json()
+    cart = data.get('cart')
+    if not cart:
+        return jsonify({"error": "Корзина пуста"}), 422
+    order_type = data.get('order_type', 'takeaway')
+    address = data.get('address', '')
+    payment_method = data.get('payment_method', 'card')
+    bonus_used = data.get('bonus_used', 0)
+    with get_db() as conn:
+        user = conn.execute("SELECT bonus_points FROM users WHERE id=?", (current_user.id,)).fetchone()
+        if bonus_used > user['bonus_points']:
+            return jsonify({"error": "Недостаточно бонусов"}), 422
+        total = 0
+        for item in cart:
+            menu_item = conn.execute("SELECT price FROM menu_items WHERE id=?", (item['menu_item_id'],)).fetchone()
+            if not menu_item:
+                return jsonify({"error": f"Блюдо {item['menu_item_id']} не найдено"}), 404
+            total += menu_item['price'] * item['quantity']
+        cur = conn.execute(
+            "INSERT INTO orders (user_id, order_type, address, status, total_price, bonus_used, payment_method) VALUES (?,?,?,?,?,?,?)",
+            (current_user.id, order_type, address, 'paid', total, bonus_used, payment_method)
+        )
+        order_id = cur.lastrowid
+        for item in cart:
+            menu_item = conn.execute("SELECT price FROM menu_items WHERE id=?", (item['menu_item_id'],)).fetchone()
+            conn.execute(
+                "INSERT INTO order_items (order_id, menu_item_id, quantity, price) VALUES (?,?,?,?)",
+                (order_id, item['menu_item_id'], item['quantity'], menu_item['price'])
+            )
+        if bonus_used > 0:
+            conn.execute("UPDATE users SET bonus_points = bonus_points - ? WHERE id=?", (bonus_used, current_user.id))
+        conn.commit()
+    return jsonify({"order_id": order_id, "total": total}), 201
+
+@app.route('/api/orders/<int:order_id>/status', methods=['PATCH'])
+@role_required('admin', 'manager')
+def api_update_order_status(order_id):
+    data = request.get_json()
+    new_status = data.get('status')
+    allowed = ['created', 'paid', 'in_progress', 'completed', 'cancelled']
+    if new_status not in allowed:
+        return jsonify({"error": f"Недопустимый статус. Допустимы: {', '.join(allowed)}"}), 422
+    with get_db() as conn:
+        order = conn.execute("SELECT * FROM orders WHERE id=?", (order_id,)).fetchone()
+        if not order:
+            return jsonify({"error": "Заказ не найден"}), 404
+        conn.execute("UPDATE orders SET status=? WHERE id=?", (new_status, order_id))
+        conn.commit()
+    return jsonify({"status": new_status})
+
+# ----- Брони -----
+@app.route('/api/reservations', methods=['GET'])
+@login_required
+def api_get_reservations():
+    if current_user.role in ('admin', 'hostess'):
+        with get_db() as conn:
+            reservations = conn.execute("SELECT * FROM reservations ORDER BY date DESC").fetchall()
+    else:
+        with get_db() as conn:
+            reservations = conn.execute("SELECT * FROM reservations WHERE user_id=? AND status='active' ORDER BY date DESC", (current_user.id,)).fetchall()
+    return jsonify([dict(r) for r in reservations])
+
+@app.route('/api/reservations', methods=['POST'])
+@login_required
+def api_create_reservation():
+    data = request.get_json()
+    required = ['table_id', 'date', 'start_time', 'end_time', 'guests']
+    if not all(k in data for k in required):
+        return jsonify({"error": f"Не хватает полей: {', '.join(required)}"}), 422
+    with get_db() as conn:
+        conflict = conn.execute('''
+            SELECT id FROM reservations
+            WHERE table_id = ? AND date = ? AND status = 'active'
+            AND NOT (end_time <= ? OR start_time >= ?)
+        ''', (data['table_id'], data['date'], data['end_time'], data['start_time'])).fetchone()
+        if conflict:
+            return jsonify({"error": "Стол уже забронирован на это время"}), 409
+        table = conn.execute("SELECT capacity FROM tables WHERE id=?", (data['table_id'],)).fetchone()
+        if not table or table['capacity'] < data['guests']:
+            return jsonify({"error": "Стол не подходит по вместимости"}), 422
+        cur = conn.execute(
+            "INSERT INTO reservations (user_id, table_id, date, start_time, end_time, guests, status) VALUES (?,?,?,?,?,?,?)",
+            (current_user.id, data['table_id'], data['date'], data['start_time'], data['end_time'], data['guests'], 'active')
+        )
+        conn.commit()
+        new_id = cur.lastrowid
+        conn.execute("UPDATE users SET bonus_points = bonus_points + 10 WHERE id=?", (current_user.id,))
+        conn.commit()
+    return jsonify({"reservation_id": new_id}), 201
+
+@app.route('/api/reservations/<int:res_id>', methods=['DELETE'])
+@login_required
+def api_cancel_reservation(res_id):
+    with get_db() as conn:
+        res = conn.execute("SELECT * FROM reservations WHERE id=?", (res_id,)).fetchone()
+        if not res:
+            return jsonify({"error": "Бронь не найдена"}), 404
+        if res['user_id'] != current_user.id and current_user.role not in ('admin', 'hostess'):
+            return jsonify({"error": "Нет доступа"}), 403
+        conn.execute("UPDATE reservations SET status='cancelled' WHERE id=?", (res_id,))
+        conn.commit()
+    return "", 204
+
+# ----- Пользователи (расширенные админ-эндпоинты) -----
+@app.route('/api/users/me', methods=['GET'])
+@login_required
+def api_get_current_user():
+    with get_db() as conn:
+        user = conn.execute("SELECT id, first_name, last_name, phone, email, role, bonus_points FROM users WHERE id=?", (current_user.id,)).fetchone()
+    return jsonify(dict(user))
+
+@app.route('/api/users', methods=['GET'])
+@role_required('admin')
+def api_get_all_users():
+    with get_db() as conn:
+        users = conn.execute("SELECT id, first_name, last_name, phone, email, role, bonus_points FROM users").fetchall()
+    return jsonify([dict(u) for u in users])
+
+@app.route('/api/admin/users', methods=['GET'])
+@role_required('admin')
+def api_admin_get_users():
+    with get_db() as conn:
+        users = conn.execute("SELECT id, first_name, last_name, phone, email, role, bonus_points FROM users").fetchall()
+    return jsonify([dict(u) for u in users])
+
+@app.route('/api/admin/users', methods=['POST'])
+@role_required('admin')
+def api_admin_create_user():
+    data = request.get_json()
+    required = ['first_name', 'last_name', 'phone', 'password']
+    if not all(k in data for k in required):
+        return jsonify({"error": f"Не хватает полей: {required}"}), 422
+    role = data.get('role', 'user')
+    try:
+        with get_db() as conn:
+            conn.execute(
+                "INSERT INTO users (first_name, last_name, phone, email, password_hash, role, bonus_points) VALUES (?,?,?,?,?,?,?)",
+                (data['first_name'], data['last_name'], data['phone'], data.get('email', ''),
+                 generate_password_hash(data['password']), role, data.get('bonus_points', 0))
+            )
+            conn.commit()
+        return jsonify({"message": "Пользователь создан"}), 201
+    except sqlite3.IntegrityError:
+        return jsonify({"error": "Телефон уже существует"}), 409
+
+@app.route('/api/admin/users/<int:user_id>', methods=['PUT'])
+@role_required('admin')
+def api_admin_update_user(user_id):
+    data = request.get_json()
+    with get_db() as conn:
+        user = conn.execute("SELECT * FROM users WHERE id=?", (user_id,)).fetchone()
+        if not user:
+            return jsonify({"error": "Пользователь не найден"}), 404
+        updates = []
+        params = []
+        if 'first_name' in data:
+            updates.append("first_name=?")
+            params.append(data['first_name'])
+        if 'last_name' in data:
+            updates.append("last_name=?")
+            params.append(data['last_name'])
+        if 'email' in data:
+            updates.append("email=?")
+            params.append(data['email'])
+        if 'role' in data:
+            updates.append("role=?")
+            params.append(data['role'])
+        if 'bonus_points' in data:
+            updates.append("bonus_points=?")
+            params.append(data['bonus_points'])
+        if 'password' in data and data['password']:
+            updates.append("password_hash=?")
+            params.append(generate_password_hash(data['password']))
+        if updates:
+            params.append(user_id)
+            conn.execute(f"UPDATE users SET {', '.join(updates)} WHERE id=?", params)
+            conn.commit()
+    return jsonify({"message": "Пользователь обновлён"})
+
+@app.route('/api/admin/users/<int:user_id>', methods=['DELETE'])
+@role_required('admin')
+def api_admin_delete_user(user_id):
+    with get_db() as conn:
+        user = conn.execute("SELECT * FROM users WHERE id=?", (user_id,)).fetchone()
+        if not user:
+            return jsonify({"error": "Пользователь не найден"}), 404
+        if user['role'] == 'admin':
+            return jsonify({"error": "Нельзя удалить администратора"}), 403
+        conn.execute("DELETE FROM users WHERE id=?", (user_id,))
+        conn.commit()
+    return "", 204
+
+# ----- Админ: все брони -----
+@app.route('/api/admin/reservations/all', methods=['GET'])
+@role_required('admin', 'hostess')
+def api_admin_get_all_reservations():
+    with get_db() as conn:
+        reservations = conn.execute('''
+            SELECT r.*, u.first_name, u.last_name, t.capacity, t.location
+            FROM reservations r
+            JOIN users u ON r.user_id = u.id
+            JOIN tables t ON r.table_id = t.id
+            ORDER BY r.date DESC
+        ''').fetchall()
+    return jsonify([dict(r) for r in reservations])
+
+@app.route('/api/admin/reservations/<int:res_id>', methods=['DELETE'])
+@role_required('admin', 'hostess')
+def api_admin_delete_reservation(res_id):
+    with get_db() as conn:
+        res = conn.execute("SELECT * FROM reservations WHERE id=?", (res_id,)).fetchone()
+        if not res:
+            return jsonify({"error": "Бронь не найдена"}), 404
+        conn.execute("UPDATE reservations SET status='cancelled' WHERE id=?", (res_id,))
+        conn.commit()
+    return "", 204
+
+# ----- Админ: столы -----
+@app.route('/api/admin/tables', methods=['GET'])
+@role_required('admin', 'manager')
+def api_admin_get_tables():
+    with get_db() as conn:
+        tables = conn.execute("SELECT * FROM tables ORDER BY id").fetchall()
+    return jsonify([dict(t) for t in tables])
+
+@app.route('/api/admin/tables', methods=['POST'])
+@role_required('admin')
+def api_admin_create_table():
+    data = request.get_json()
+    capacity = data.get('capacity')
+    location = data.get('location', '')
+    if not capacity or capacity <= 0:
+        return jsonify({"error": "Вместимость должна быть положительным числом"}), 422
+    with get_db() as conn:
+        cur = conn.execute("INSERT INTO tables (capacity, location, active) VALUES (?,?,1)", (capacity, location))
+        conn.commit()
+        new_id = cur.lastrowid
+    return jsonify({"id": new_id, "capacity": capacity, "location": location}), 201
+
+@app.route('/api/admin/tables/<int:table_id>', methods=['DELETE'])
+@role_required('admin')
+def api_admin_delete_table(table_id):
+    with get_db() as conn:
+        conn.execute("DELETE FROM tables WHERE id=?", (table_id,))
+        conn.commit()
+    return "", 204
+
+# ----- Админ: очистка всех данных -----
+@app.route('/api/admin/clear-all', methods=['POST'])
+@role_required('admin')
+def api_admin_clear_all():
+    with get_db() as conn:
+        conn.execute("DELETE FROM users WHERE role != 'admin'")
+        conn.execute("DELETE FROM menu_items")
+        conn.execute("DELETE FROM orders")
+        conn.execute("DELETE FROM order_items")
+        conn.execute("DELETE FROM reservations")
+        conn.execute("DELETE FROM categories")
+        conn.execute("UPDATE sqlite_sequence SET seq=0 WHERE name IN ('users','menu_items','orders','order_items','reservations','categories')")
+        conn.commit()
+    return jsonify({"message": "Все данные очищены (администратор сохранён)"}), 200
+
+# ----- Админ: экспорт/импорт JSON -----
+@app.route('/api/admin/export-json', methods=['GET'])
+@role_required('admin')
+def api_admin_export_json():
+    data = {}
+    with get_db() as conn:
+        tables = ['users','categories','menu_items','tables','reservations','orders','order_items','reviews','payment_methods','delivery_addresses','user_allergens']
+        for t in tables:
+            rows = conn.execute(f"SELECT * FROM {t}").fetchall()
+            data[t] = [dict(row) for row in rows]
+    return jsonify(data)
+
+@app.route('/api/admin/import-json', methods=['POST'])
+@role_required('admin')
+def api_admin_import_json():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Нет данных"}), 422
+    with get_db() as conn:
+        tables = ['order_items','orders','reservations','menu_items','categories','users','tables','reviews','payment_methods','delivery_addresses','user_allergens']
+        for t in tables:
+            conn.execute(f"DELETE FROM {t}")
+        for user in data.get('users', []):
+            conn.execute(
+                "INSERT INTO users (first_name, last_name, phone, email, password_hash, role, bonus_points) VALUES (?,?,?,?,?,?,?)",
+                (user['first_name'], user['last_name'], user['phone'], user.get('email',''), user['password_hash'], user['role'], user.get('bonus_points',0))
+            )
+        for cat in data.get('categories', []):
+            conn.execute("INSERT INTO categories (name) VALUES (?)", (cat['name'],))
+        for table in data.get('tables', []):
+            conn.execute("INSERT INTO tables (capacity, location, active, pos_x, pos_y, width, height, shape) VALUES (?,?,?,?,?,?,?,?)",
+                         (table['capacity'], table.get('location',''), table.get('active',1), table.get('pos_x',0), table.get('pos_y',0),
+                          table.get('width',100), table.get('height',100), table.get('shape','rectangle')))
+        for item in data.get('menu_items', []):
+            conn.execute(
+                "INSERT INTO menu_items (category_id, name, description, price, image, allergens, available) VALUES (?,?,?,?,?,?,?)",
+                (item['category_id'], item['name'], item.get('description',''), item['price'], item.get('image',''), item.get('allergens',''), item.get('available',1))
+            )
+        for res in data.get('reservations', []):
+            conn.execute(
+                "INSERT INTO reservations (user_id, table_id, date, start_time, end_time, guests, status) VALUES (?,?,?,?,?,?,?)",
+                (res['user_id'], res['table_id'], res['date'], res['start_time'], res['end_time'], res['guests'], res.get('status','active'))
+            )
+        for order in data.get('orders', []):
+            conn.execute(
+                "INSERT INTO orders (user_id, order_type, address, status, total_price, bonus_used, payment_method, created_at) VALUES (?,?,?,?,?,?,?,?)",
+                (order['user_id'], order['order_type'], order.get('address',''), order['status'], order['total_price'], order.get('bonus_used',0), order.get('payment_method','card'), order.get('created_at', datetime.now().isoformat()))
+            )
+        for oi in data.get('order_items', []):
+            conn.execute(
+                "INSERT INTO order_items (order_id, menu_item_id, quantity, price) VALUES (?,?,?,?)",
+                (oi['order_id'], oi['menu_item_id'], oi['quantity'], oi['price'])
+            )
+        conn.commit()
+    return jsonify({"message": "Данные импортированы"}), 200
+
+# ----- Админ: загрузка/выгрузка файла БД -----
+@app.route('/api/admin/database-file', methods=['POST'])
+@role_required('admin')
+def api_admin_upload_database():
+    if 'file' not in request.files:
+        return jsonify({"error": "Файл не передан"}), 400
+    file = request.files['file']
+    if not file.filename.endswith('.sqlite'):
+        return jsonify({"error": "Нужен файл .sqlite"}), 422
+    backup_name = DATABASE + '.backup_' + str(int(time.time()))
+    shutil.copy(DATABASE, backup_name)
+    file.save(DATABASE)
+    return jsonify({"message": "База данных заменена", "backup": backup_name}), 200
+
+@app.route('/api/admin/database-file', methods=['GET'])
+@role_required('admin')
+def api_admin_download_database():
+    return send_file(DATABASE, as_attachment=True, download_name='myasko.sqlite')
+
+# ----- Аутентификация (для API) -----
+@app.route('/api/login', methods=['POST'])
+def api_login():
+    data = request.get_json()
+    phone = data.get('phone')
+    password = data.get('password')
+    if not phone or not password:
+        return jsonify({"error": "Телефон и пароль обязательны"}), 422
+    with get_db() as conn:
+        row = conn.execute("SELECT * FROM users WHERE phone=?", (phone,)).fetchone()
+        if row and check_password_hash(row['password_hash'], password):
+            user = User(row)
+            login_user(user)
+            return jsonify({"message": "Вход выполнен", "user_id": user.id, "role": user.role}), 200
+    return jsonify({"error": "Неверный телефон или пароль"}), 401
+
+@app.route('/api/logout', methods=['POST'])
+@login_required
+def api_logout():
+    logout_user()
+    return jsonify({"message": "Выход выполнен"}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)

@@ -1,24 +1,52 @@
 {% extends "admin_base.html" %}
 {% block admin_content %}
 <h2>Редактировать блюдо</h2>
-<form method="POST" enctype="multipart/form-data">
+<form method="POST" enctype="multipart/form-data" class="admin-form">
     {{ form.hidden_tag() }}
-    {{ form.name.label }} {{ form.name }}<br>
-    {{ form.price.label }} {{ form.price(step="0.01") }}<br>
-    {{ form.category_id.label }} {{ form.category_id }}<br>
-    {{ form.description.label }} {{ form.description }}<br>
-    {{ form.available.label }} {{ form.available }}<br>
-    <label>Фото (файл): {{ form.image_file }}</label><br>
-    <label>или URL: {{ form.image_url(placeholder="https://...") }}</label><br>
+    <div class="form-group">{{ form.name.label }} {{ form.name(class="form-control") }}</div>
+    <div class="form-group">{{ form.price.label }} {{ form.price(class="form-control", step="0.01") }}</div>
+    <div class="form-group">{{ form.category_id.label }} {{ form.category_id(class="form-control") }}</div>
+    <div class="form-group">{{ form.description.label }} {{ form.description(class="form-control", rows=4) }}</div>
+    <div class="form-group">{{ form.available.label }} {{ form.available() }}</div>
+    <div class="form-group">{{ form.image_file.label }} {{ form.image_file() }}</div>
+    <div class="form-group">{{ form.image_url.label }} {{ form.image_url(class="form-control", placeholder="https://...") }}</div>
     {% if item.image %}
-        <p>Текущее фото:
-        {% if item.image.startswith('http') %}
-            <img src="{{ item.image }}" height="80">
-        {% else %}
-            <img src="{{ url_for('static', filename=item.image) }}" height="80">
-        {% endif %}
-        </p>
+    <div class="form-group">
+        <p>Текущее фото:</p>
+        <img src="{{ url_for('static', filename=item.image) if not item.image.startswith('http') else item.image }}" height="80">
+    </div>
     {% endif %}
-    {{ form.submit(class="btn") }}
+    {{ form.submit(class="btn-primary") }}
 </form>
+<style>
+.admin-form {
+    background: var(--black-40);
+    padding: 2rem;
+    border-radius: 32px;
+    max-width: 600px;
+}
+.form-group {
+    margin-bottom: 1rem;
+}
+.form-group label {
+    display: block;
+    font-family: var(--font-heading);
+    margin-bottom: 0.3rem;
+}
+.form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 30px;
+    border: none;
+    background: var(--beige-light);
+}
+.btn-primary {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 8px 24px;
+    border-radius: 40px;
+    cursor: pointer;
+}
+</style>
 {% endblock %}

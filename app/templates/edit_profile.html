@@ -1,23 +1,44 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Редактирование профиля</h2>
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <ul class="flash-messages">
-      {% for cat, msg in messages %}
-        <li class="flash-{{ cat }}">{{ msg }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
-<form method="post">
-    {{ form.hidden_tag() }}
-    {{ form.first_name.label }} {{ form.first_name }}<br>
-    {{ form.last_name.label }} {{ form.last_name }}<br>
-    {{ form.email.label }} {{ form.email }}<br>
-    <h4>Изменить пароль</h4>
-    {{ form.password.label }} {{ form.password(placeholder="Текущий пароль") }}<br>
-    {{ form.new_password.label }} {{ form.new_password(placeholder="Новый пароль") }}<br>
-    {{ form.submit(class="btn") }}
-</form>
+<div class="edit-profile-container">
+    <h2>Редактирование профиля</h2>
+    <form method="post" class="profile-edit-form">
+        {{ form.hidden_tag() }}
+        <div class="form-group">{{ form.first_name.label }} {{ form.first_name(class="form-control") }}</div>
+        <div class="form-group">{{ form.last_name.label }} {{ form.last_name(class="form-control") }}</div>
+        <div class="form-group">{{ form.email.label }} {{ form.email(class="form-control") }}</div>
+        <hr>
+        <h4>Изменить пароль</h4>
+        <div class="form-group">{{ form.password.label }} {{ form.password(class="form-control", placeholder="Текущий пароль") }}</div>
+        <div class="form-group">{{ form.new_password.label }} {{ form.new_password(class="form-control", placeholder="Новый пароль") }}</div>
+        {{ form.submit(class="btn-primary") }}
+    </form>
+</div>
+<style>
+.edit-profile-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: var(--black-40);
+    border-radius: 32px;
+    padding: 2rem;
+}
+.profile-edit-form .form-group {
+    margin-bottom: 1rem;
+}
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border-radius: 30px;
+    border: none;
+    background: var(--beige-light);
+}
+.btn-primary {
+    background: var(--accent);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 40px;
+    color: white;
+    cursor: pointer;
+}
+</style>
 {% endblock %}

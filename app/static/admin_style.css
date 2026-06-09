@@ -1,28 +1,218 @@
-/* admin_style.css */
+/* ==================== АДМИН-СТИЛИ (с сохранением цветовой гаммы Pixco) ==================== */
+:root {
+  --brown-dark: #3a2c1e;
+  --brown-medium: #7e5b3b;
+  --beige-light: #dbd8c1;
+  --accent: #e69f8a;
+  --black-40: rgba(0, 0, 0, 0.4);
+  --font-heading: 'Volkhov-Italic', 'Volkhov-Bold Italic', serif;
+  --font-body: 'Inter-Regular', 'Anek Devanagari-Regular', sans-serif;
+}
+
 .admin-wrapper {
   display: flex;
   min-height: 80vh;
+  background: var(--black-40);
+  border-radius: 24px;
+  margin: 20px;
 }
+
 .admin-sidebar {
   width: 250px;
-  background: #3a2c1e;
-  color: #fff;
+  background: var(--brown-dark);
   padding: 1rem;
+  border-radius: 20px 0 0 20px;
+  color: var(--beige-light);
 }
-.admin-sidebar ul { list-style: none; }
-.admin-sidebar a { color: #dbd8c1; display: block; padding: 0.5rem 0; }
+.admin-sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+.admin-sidebar a {
+  color: var(--beige-light);
+  display: block;
+  padding: 0.8rem 0.5rem;
+  font-family: var(--font-heading);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(219,216,193,0.2);
+}
+.admin-sidebar a:hover {
+  background: var(--accent);
+  color: var(--brown-dark);
+  border-radius: 12px;
+  padding-left: 1rem;
+}
+
 .admin-content {
   flex: 1;
   padding: 1.5rem;
-  background: #f9f6f0;
+  background: rgba(219,216,193,0.1);
+  border-radius: 0 20px 20px 0;
+  overflow-x: auto;
 }
 
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.stat-card {
+  background: var(--black-40);
+  padding: 1.5rem;
+  border-radius: 20px;
+  text-align: center;
+}
+.stat-card span {
+  display: block;
+  color: var(--beige-light);
+  font-size: 1rem;
+}
+.stat-card strong {
+  font-size: 2rem;
+  color: var(--accent);
+}
+
+/* Таблицы */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background: var(--black-40);
+  border-radius: 16px;
+  overflow: hidden;
+}
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(219,216,193,0.2);
+}
+th {
+  background: var(--brown-dark);
+  font-family: var(--font-heading);
+  color: var(--beige-light);
+}
+tr:hover {
+  background: rgba(0,0,0,0.3);
+}
+
+/* Кнопки в админке (переопределяем, чтобы они были читаемы) */
+.btn, button, input[type="submit"] {
+  background-color: var(--beige-light);
+  border: none;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  color: var(--brown-dark);
+  cursor: pointer;
+}
+.btn:hover, button:hover, input[type="submit"]:hover {
+  background-color: var(--accent);
+  color: white;
+}
+
+/* Формы в админке */
+form input, form select, form textarea {
+  background: var(--beige-light);
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  margin: 5px 0 15px;
+  width: 100%;
+  max-width: 300px;
+}
+
+/* Вкладки */
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.tab-btn {
+  background: var(--black-40);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-family: var(--font-heading);
+}
+.tab-btn.active {
+  background: var(--accent);
+  color: white;
+}
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+}
+
+/* Схема зала в админке */
+.admin-floor-plan {
+  position: relative;
+  background: #2c2c2c;
+  border-radius: 16px;
+  min-height: 500px;
+  overflow: auto;
+}
+.admin-floor-table {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.free { background: #2ecc71; }
+.occupied { background: #e74c3c; }
+
+/* Модальное окно */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+.modal-content {
+  background: var(--brown-dark);
+  padding: 2rem;
+  border-radius: 24px;
+  max-width: 400px;
+  text-align: center;
+  color: var(--beige-light);
+}
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+/* Адаптивность админки */
 @media (max-width: 768px) {
   .admin-wrapper {
     flex-direction: column;
   }
   .admin-sidebar {
     width: 100%;
-    padding: 0.5rem;
+    border-radius: 20px 20px 0 0;
   }
+  .admin-content {
+    border-radius: 0 0 20px 20px;
+  }
+  th, td {
+    white-space: nowrap;
+  }
+}
+body {
+  padding-top: 80px;
+}
+@media (max-width: 768px) {
+  body { padding-top: 120px; }
 }

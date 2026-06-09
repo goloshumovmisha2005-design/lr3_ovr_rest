@@ -2,36 +2,39 @@
 {% block admin_content %}
 <h2>Столы</h2>
 {% if current_user.role == 'admin' %}
-<form method="POST" action="{{ url_for('admin_add_table') }}">
-    {{ add_form.hidden_tag() }}
-    {{ add_form.capacity(placeholder="Вместимость") }}
-    {{ add_form.location(placeholder="Расположение") }}
-    {{ add_form.submit(class="btn") }}
-</form>
+<div class="add-form-card">
+    <form method="POST" action="{{ url_for('admin_add_table') }}" class="form-row">
+        {{ add_form.hidden_tag() }}
+        {{ add_form.capacity(placeholder="Вместимость") }}
+        {{ add_form.location(placeholder="Расположение") }}
+        {{ add_form.submit(class="btn-primary") }}
+    </form>
+</div>
 {% endif %}
-<hr>
-<table>
-    <tr><th>ID</th><th>Вместимость</th><th>Расположение</th><th>Активен</th><th>Действия</th></tr>
+<table class="admin-table">
+    <thead><tr><th>ID</th><th>Вместимость</th><th>Расположение</th><th>Активен</th><th>Действия</th></tr></thead>
+    <tbody>
     {% for t in tables %}
     <tr>
         <td>{{ t.id }}</td>
         <td>{{ t.capacity }}</td>
         <td>{{ t.location or '' }}</td>
         <td>{{ 'Да' if t.active else 'Нет' }}</td>
-        <td>
+        <td class="actions">
             <form method="POST" action="{{ url_for('admin_toggle_table', table_id=t.id) }}" style="display:inline">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
-                <button type="submit" class="btn btn-toggle">{{ 'Деактивировать' if t.active else 'Активировать' }}</button>
+                <button class="btn-icon">{{ '🔴' if t.active else '🟢' }}</button>
             </form>
             {% if current_user.role == 'admin' %}
-            <a href="{{ url_for('admin_edit_table', table_id=t.id) }}" class="btn btn-edit">✏️</a>
-            <form method="POST" action="{{ url_for('admin_delete_table', table_id=t.id) }}" style="display:inline" onsubmit="return confirm('Удалить стол?')">
+            <a href="{{ url_for('admin_edit_table', table_id=t.id) }}" class="btn-icon">✏️</a>
+            <form method="POST" action="{{ url_for('admin_delete_table', table_id=t.id) }}" onsubmit="return confirm('Удалить стол?')" style="display:inline">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
-                <button type="submit" class="btn btn-delete">🗑️</button>
+                <button class="btn-icon">🗑️</button>
             </form>
             {% endif %}
         </td>
     </tr>
     {% endfor %}
+    </tbody>
 </table>
 {% endblock %}

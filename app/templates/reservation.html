@@ -1,18 +1,66 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Бронирование столика</h2>
-<form method="POST" id="filter-form">
-  {{ form.hidden_tag() }}
-  <label style="font-weight:500;">{{ form.date.label }} {{ form.date(required=True, style="padding:8px; border-radius:12px; border:1px solid #ccc;") }}</label>
-  <label>С {{ form.start_hour }} : {{ form.start_min }}</label>
-  <label>до {{ form.end_hour }} : {{ form.end_min }}</label>
-  <label>{{ form.guests.label }} {{ form.guests(min=1, max=20, style="padding:8px; border-radius:12px;") }}</label>
-  {{ form.submit(class="btn") }}
-</form>
+<div class="reservation-container">
+  <h2 class="section-title">Забронировать столик</h2>
 
-{% if show_map %}
-  <div id="floor-plan" class="floor-plan" data-placeholder="Это схема зала">Загрузка...</div>
-{% endif %}
+  <div class="filter-card">
+    <form method="POST" id="filter-form" class="reservation-form">
+      {{ form.hidden_tag() }}
+      <div class="form-row">
+        <div class="form-field">
+          <label>{{ form.date.label }}</label>
+          {{ form.date(required=True, class="date-input") }}
+        </div>
+        <div class="form-field time-range">
+          <label>Время</label>
+          <div class="time-selectors">
+            <select name="start_hour" id="start_hour" class="time-select">
+              {% for h in range(10, 24) %}
+                <option value="{{ '%02d' % h }}" {% if form.start_hour.data == h %}selected{% endif %}>{{ '%02d' % h }}</option>
+              {% endfor %}
+            </select>
+            <span>:</span>
+            <select name="start_min" id="start_min" class="time-select">
+              {% for m in ['00','15','30','45'] %}
+                <option value="{{ m }}" {% if form.start_min.data|string == m %}selected{% endif %}>{{ m }}</option>
+              {% endfor %}
+            </select>
+            <span>—</span>
+            <select name="end_hour" id="end_hour" class="time-select">
+              {% for h in range(10, 24) %}
+                <option value="{{ '%02d' % h }}" {% if form.end_hour.data == h %}selected{% endif %}>{{ '%02d' % h }}</option>
+              {% endfor %}
+            </select>
+            <span>:</span>
+            <select name="end_min" id="end_min" class="time-select">
+              {% for m in ['00','15','30','45'] %}
+                <option value="{{ m }}" {% if form.end_min.data|string == m %}selected{% endif %}>{{ m }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>{{ form.guests.label }}</label>
+          {{ form.guests(min=1, max=20, class="guests-input") }}
+        </div>
+        <div class="form-field">
+          {{ form.submit(class="btn-submit") }}
+        </div>
+      </div>
+    </form>
+  </div>
+
+  {% if show_map %}
+  <div class="floor-plan-wrapper">
+    <div class="legend">
+      <span><span class="legend-color free"></span> Свободен</span>
+      <span><span class="legend-color suitable"></span> Подходит по числу гостей</span>
+      <span><span class="legend-color occupied"></span> Занят</span>
+    </div>
+    <div id="floor-plan" class="floor-plan">Загрузка схемы зала...</div>
+  </div>
+  {% endif %}
+</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -27,47 +75,40 @@ document.addEventListener('DOMContentLoaded', function() {
     const endTime = endHour + ':' + endMin;
     const guests = form.guests.value || 2;
 
+    const container = document.getElementById('floor-plan');
+    container.innerHTML = '<div class="loading-spinner"></div>';
+
     fetch(`/api/tables?date=${date}&start=${startTime}&end=${endTime}&guests=${guests}`)
       .then(r => r.json())
       .then(tables => {
-          const container = document.getElementById('floor-plan');
           container.innerHTML = '';
-
           if (!tables || tables.length === 0) {
-              container.classList.add('empty');
+              container.innerHTML = '<div class="empty-plan">Нет свободных столов на выбранное время</div>';
               return;
           }
-          container.classList.remove('empty');
 
-          // Определяем границы контейнера
-          const padding = 20;
-          let maxX = 800, maxY = 600;
-          if (tables.length > 0) {
-              maxX = Math.max(...tables.map(t => (t.pos_x || 0) + (t.width || 100))) + padding;
-              maxY = Math.max(...tables.map(t => (t.pos_y || 0) + (t.height || 100))) + padding;
-          }
-          container.style.width = '100%';
-          container.style.height = maxY + 'px';
-          container.style.minHeight = '500px';
-          container.style.overflow = 'auto';
+          const wrapper = document.createElement('div');
+          wrapper.className = 'plan-grid';
+          let maxX = 0, maxY = 0;
 
           tables.forEach(t => {
-              const div = document.createElement('div');
-              div.className = 'table-card ' + (t.free ? (t.suitable ? 'free suitable' : 'free') : 'occupied');
-              div.innerHTML = `<strong>Стол ${t.id}</strong><br>${t.capacity} мест`;
-              // Используем сохранённые координаты или авто-сетку
-              const x = t.pos_x !== undefined && t.pos_x !== 0 ? t.pos_x : (20 + (tables.indexOf(t) % 5) * 150);
-              const y = t.pos_y !== undefined && t.pos_y !== 0 ? t.pos_y : (20 + Math.floor(tables.indexOf(t) / 5) * 120);
-              div.style.left = x + 'px';
-              div.style.top = y + 'px';
-              div.style.width = (t.width || 100) + 'px';
-              div.style.height = (t.height || 100) + 'px';
-              if (t.shape === 'circle') div.style.borderRadius = '50%';
-              else div.style.borderRadius = '12px';
+              const card = document.createElement('div');
+              card.className = `table-card ${t.free ? (t.suitable ? 'free suitable' : 'free') : 'occupied'}`;
+              card.innerHTML = `<strong>Стол ${t.id}</strong><br>${t.capacity} мест`;
+              const x = t.pos_x || (20 + (tables.indexOf(t) % 5) * 150);
+              const y = t.pos_y || (20 + Math.floor(tables.indexOf(t) / 5) * 120);
+              card.style.left = x + 'px';
+              card.style.top = y + 'px';
+              card.style.width = (t.width || 100) + 'px';
+              card.style.height = (t.height || 100) + 'px';
+              if (t.shape === 'circle') card.style.borderRadius = '50%';
+              else card.style.borderRadius = '16px';
+              maxX = Math.max(maxX, x + (t.width || 100));
+              maxY = Math.max(maxY, y + (t.height || 100));
 
               if (t.free && t.suitable) {
-                  div.addEventListener('click', () => {
-                      if (confirm(`Забронировать стол ${t.id} на ${startTime}-${endTime}?`)) {
+                  card.addEventListener('click', () => {
+                      if (confirm(`Забронировать стол ${t.id} на ${startTime}–${endTime}?`)) {
                           let bookingForm = document.createElement('form');
                           bookingForm.method = 'POST';
                           bookingForm.innerHTML = `
@@ -85,10 +126,186 @@ document.addEventListener('DOMContentLoaded', function() {
                       }
                   });
               }
-              container.appendChild(div);
+              wrapper.appendChild(card);
           });
+          wrapper.style.position = 'relative';
+          wrapper.style.height = (maxY + 40) + 'px';
+          container.appendChild(wrapper);
+      })
+      .catch(err => {
+          container.innerHTML = '<div class="error-plan">Ошибка загрузки схемы. Попробуйте позже.</div>';
+          console.error(err);
       });
     {% endif %}
 });
 </script>
+
+<style>
+.reservation-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.section-title {
+  font-family: var(--font-heading);
+  font-size: 2.2rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.filter-card {
+  background: var(--black-40);
+  border-radius: 32px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(2px);
+}
+
+.reservation-form .form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.form-field {
+  flex: 1;
+  min-width: 140px;
+}
+
+.form-field label {
+  display: block;
+  font-family: var(--font-heading);
+  margin-bottom: 0.3rem;
+}
+
+.date-input, .guests-input, .time-select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 30px;
+  border: none;
+  background: var(--beige-light);
+  font-family: var(--font-body);
+}
+
+.time-range .time-selectors {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--beige-light);
+  border-radius: 30px;
+  padding: 0 10px;
+}
+
+.time-select {
+  width: auto;
+  background: transparent;
+  padding: 10px 4px;
+}
+
+.btn-submit {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 10px 28px;
+  border-radius: 40px;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.2s;
+  width: 100%;
+}
+
+.btn-submit:hover {
+  background: #c97a64;
+  transform: scale(1.02);
+}
+
+.floor-plan-wrapper {
+  background: rgba(0,0,0,0.5);
+  border-radius: 32px;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.legend {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.legend-color {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+.legend-color.free { background: #2ecc71; }
+.legend-color.suitable { background: #f39c12; }
+.legend-color.occupied { background: #e74c3c; }
+
+.floor-plan {
+  min-height: 500px;
+  position: relative;
+}
+
+.plan-grid {
+  position: relative;
+  width: 100%;
+}
+
+.table-card {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.1s, filter 0.1s;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+.table-card.free { background: #2ecc71; color: #1e3c1c; }
+.table-card.suitable { background: #f39c12; color: #3c2a1a; }
+.table-card.occupied { background: #e74c3c; color: #fff; cursor: not-allowed; }
+.table-card:hover:not(.occupied) { transform: scale(1.02); filter: brightness(1.05); }
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(255,255,255,0.3);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 1s infinite linear;
+  margin: 100px auto;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.empty-plan, .error-plan {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .reservation-form .form-row {
+    flex-direction: column;
+  }
+  .time-range .time-selectors {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .table-card {
+    font-size: 12px;
+  }
+}
+</style>
 {% endblock %}

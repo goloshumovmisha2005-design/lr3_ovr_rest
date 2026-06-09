@@ -1,40 +1,51 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Оформление заказа</h2>
-<h3>Ваш заказ:</h3>
-<ul>
-  {% for id, qty in cart.items() %}
-  <li>{{ menu_names[id] }} – {{ qty }} шт. × {{ prices[id] }} ₽ = {{ prices[id]*qty }} ₽</li>
-  {% endfor %}
-</ul>
-<p>Сумма: <strong>{{ total }} ₽</strong></p>
+<div class="checkout-container">
+    <h2>Оформление заказа</h2>
+    <div class="checkout-layout">
+        <div class="order-summary">
+            <h3>Ваш заказ</h3>
+            <ul class="checkout-items">
+                {% for id, qty in cart.items() %}
+                <li>{{ menu_names[id] }} × {{ qty }} = {{ prices[id]*qty }} ₽</li>
+                {% endfor %}
+            </ul>
+            <p class="total"><strong>Сумма: {{ total }} ₽</strong></p>
+        </div>
 
-<form method="POST" id="checkout-form">
-  {{ form.hidden_tag() }}
-  <h3>Способ получения</h3>
-  {% for subfield in form.order_type %}
-    <label>{{ subfield }} {{ subfield.label }}</label>
-  {% endfor %}
-  <div id="address-block" style="display:none;">
-    {{ form.address_id.label }} {{ form.address_id }}
-    (или <a href="{{ url_for('profile') }}">добавьте новый</a>)
-  </div>
+        <form method="POST" id="checkout-form" class="checkout-form">
+            {{ form.hidden_tag() }}
+            <div class="form-section">
+                <h3>Способ получения</h3>
+                {% for subfield in form.order_type %}
+                <label class="radio-label">{{ subfield }} {{ subfield.label }}</label>
+                {% endfor %}
+                <div id="address-block" style="display:none;">
+                    {{ form.address_id.label }} {{ form.address_id(class="form-select") }}
+                    <span class="help-text">или <a href="{{ url_for('profile') }}">добавьте новый</a></span>
+                </div>
+            </div>
 
-  <h3>Способ оплаты</h3>
-  {% for subfield in form.payment_method %}
-    <label>{{ subfield }} {{ subfield.label }}</label>
-  {% endfor %}
-  {% if payment_methods %}
-  <p>Сохранённые карты: {% for pm in payment_methods %} <span>****{{ pm.card_number }}</span>{% endfor %}</p>
-  {% endif %}
+            <div class="form-section">
+                <h3>Способ оплаты</h3>
+                {% for subfield in form.payment_method %}
+                <label class="radio-label">{{ subfield }} {{ subfield.label }}</label>
+                {% endfor %}
+                {% if payment_methods %}
+                <p class="saved-cards">Сохранённые карты: {% for pm in payment_methods %}****{{ pm.card_number }} {% endfor %}</p>
+                {% endif %}
+            </div>
 
-  <h3>Использовать бонусы</h3>
-  <p>У вас {{ current_user.bonus_points }} бонусов (1 бонус = 1 ₽, до 50% заказа)</p>
-  {{ form.bonus_used.label }} {{ form.bonus_used(min=0, max=[current_user.bonus_points, (total*0.5)|int]|min) }}
+            <div class="form-section">
+                <h3>Бонусы</h3>
+                <p>У вас {{ current_user.bonus_points }} бонусов (1 бонус = 1 ₽, до 50% заказа)</p>
+                {{ form.bonus_used.label }} {{ form.bonus_used(class="bonus-input") }}
+            </div>
 
-  <br><br>
-  {{ form.submit(class="big-btn") }}
-</form>
+            {{ form.submit(class="btn-primary submit-btn") }}
+        </form>
+    </div>
+</div>
 
 <script>
 function toggleAddress() {
@@ -44,4 +55,48 @@ function toggleAddress() {
 document.querySelectorAll('input[name="order_type"]').forEach(r => r.addEventListener('change', toggleAddress));
 toggleAddress();
 </script>
+
+<style>
+.checkout-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+.checkout-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+.order-summary {
+    flex: 1;
+    background: var(--black-40);
+    border-radius: 32px;
+    padding: 1.5rem;
+}
+.checkout-form {
+    flex: 2;
+    background: var(--black-40);
+    border-radius: 32px;
+    padding: 1.5rem;
+}
+.form-section {
+    margin-bottom: 2rem;
+}
+.radio-label {
+    display: inline-block;
+    margin-right: 1.5rem;
+}
+.bonus-input {
+    width: 150px;
+    padding: 8px;
+    border-radius: 30px;
+    border: none;
+    background: var(--beige-light);
+}
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.2rem;
+}
+</style>
 {% endblock %}

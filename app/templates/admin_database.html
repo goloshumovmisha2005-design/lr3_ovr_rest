@@ -1,9 +1,35 @@
 {% extends "admin_base.html" %}
 {% block admin_content %}
 <h2>Таблицы базы данных</h2>
-<ul>
+<div class="tables-grid">
     {% for t in tables %}
-    <li><a href="{{ url_for('admin_view_table', table_name=t) }}">{{ t }}</a></li>
+    <a href="{{ url_for('admin_view_table', table_name=t) }}" class="table-card-link">
+        <div class="table-card">📁 {{ t }}</div>
+    </a>
     {% endfor %}
-</ul>
+</div>
+<style>
+.tables-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+.table-card-link {
+    text-decoration: none;
+}
+.table-card {
+    background: var(--black-40);
+    border-radius: 20px;
+    padding: 1.5rem;
+    text-align: center;
+    font-family: var(--font-heading);
+    transition: 0.2s;
+}
+.table-card:hover {
+    background: var(--accent);
+    color: var(--brown-dark);
+    transform: translateY(-3px);
+}
+</style>
 {% endblock %}

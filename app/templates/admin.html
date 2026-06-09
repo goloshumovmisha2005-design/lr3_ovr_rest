@@ -1,12 +1,74 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends "admin_base.html" %}
+{% block admin_content %}
 <h2>Административная панель</h2>
-<h3>Все заказы</h3>
-{% for order in orders %}
-    <p>№{{ order.id }}, пользователь: {{ order.first_name }} {{ order.last_name }}, сумма: {{ order.total_price }}, статус: {{ order.status }}</p>
-{% endfor %}
-<h3>Все бронирования</h3>
-{% for res in reservations %}
-    <p>{{ res.first_name }} {{ res.last_name }}: {{ res.date }} {{ res.start_time }}-{{ res.end_time }}, стол {{ res.table_id }} ({{ res.capacity }} мест) — {{ res.status }}</p>
-{% endfor %}
+
+<div class="stats">
+    <div class="stat-card"><span>Заказов:</span><strong>{{ orders|length }}</strong></div>
+    <div class="stat-card"><span>Броней:</span><strong>{{ reservations|length }}</strong></div>
+</div>
+
+<div class="admin-section">
+    <h3>Все заказы</h3>
+    <div class="orders-list">
+        {% for order in orders %}
+        <div class="order-card">
+            <span class="order-id">№{{ order.id }}</span>
+            <span class="order-user">{{ order.first_name }} {{ order.last_name }}</span>
+            <span class="order-total">{{ order.total_price }} ₽</span>
+            <span class="order-status status-{{ order.status }}">{{ order.status }}</span>
+            <a href="{{ url_for('admin_order_detail', order_id=order.id) }}" class="btn-small">Детали</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="admin-section">
+    <h3>Все бронирования</h3>
+    <div class="reservations-list">
+        {% for res in reservations %}
+        <div class="reservation-card">
+            <span>{{ res.first_name }} {{ res.last_name }}</span>
+            <span>{{ res.date }} {{ res.start_time }}-{{ res.end_time }}</span>
+            <span>Стол {{ res.table_id }} ({{ res.capacity }} мест)</span>
+            <span class="status-{{ res.status }}">{{ res.status }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.admin-section {
+    background: var(--black-40);
+    border-radius: 24px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+.admin-section h3 {
+    font-family: var(--font-heading);
+    margin-bottom: 1rem;
+}
+.order-card, .reservation-card {
+    background: rgba(0,0,0,0.3);
+    border-radius: 16px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+}
+.order-card span, .reservation-card span {
+    flex: 1;
+}
+.status-paid, .status-active { color: #2ecc71; }
+.status-cancelled { color: #e74c3c; }
+.btn-small {
+    background: var(--accent);
+    padding: 4px 12px;
+    border-radius: 30px;
+    color: white;
+    text-decoration: none;
+    font-size: 0.8rem;
+}
+</style>
 {% endblock %}

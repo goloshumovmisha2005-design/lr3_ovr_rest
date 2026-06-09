@@ -1,27 +1,68 @@
 {% extends "admin_base.html" %}
 {% block admin_content %}
-<h2>Импорт данных</h2>
+<h2>Импорт / Экспорт данных</h2>
 
-<h3>Экспорт данных</h3>
-<p><a href="{{ url_for('export_database') }}" class="btn">💾 Скачать БД (SQLite)</a></p>
-<p><a href="{{ url_for('export_json') }}" class="btn">📋 Скачать данные (JSON)</a></p>
+<div class="import-export-cards">
+    <div class="action-card">
+        <h3>📤 Экспорт</h3>
+        <p><a href="{{ url_for('export_database') }}" class="btn-primary">💾 Скачать БД (SQLite)</a></p>
+        <p><a href="{{ url_for('export_json') }}" class="btn-secondary">📋 Скачать данные (JSON)</a></p>
+    </div>
 
-<h3>Импорт SQLite дампа</h3>
-<form method="POST" enctype="multipart/form-data" action="{{ url_for('import_sqlite') }}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
-    <input type="file" name="dbfile" accept=".sqlite" required>
-    <button type="submit" class="btn">Загрузить и восстановить</button>
-</form>
+    <div class="action-card">
+        <h3>📥 Импорт SQLite дампа</h3>
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('import_sqlite') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token_value }}">
+            <input type="file" name="dbfile" accept=".sqlite" required class="file-input">
+            <button type="submit" class="btn-primary">Загрузить и восстановить</button>
+        </form>
+    </div>
 
-<hr>
+    <div class="action-card">
+        <h3>📥 Импорт из JSON</h3>
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <div class="form-group">{{ form.datafile.label }} {{ form.datafile(class="file-input") }}</div>
+            <label>{{ form.import_menu }} {{ form.import_menu.label }}</label>
+            <label>{{ form.import_users }} {{ form.import_users.label }}</label>
+            <label>{{ form.import_tables }} {{ form.import_tables.label }}</label>
+            {{ form.submit(class="btn-primary") }}
+        </form>
+    </div>
+</div>
 
-<h3>Импорт из JSON</h3>
-<form method="POST" enctype="multipart/form-data">
-    {{ form.hidden_tag() }}
-    <label>{{ form.datafile.label }}: {{ form.datafile(accept=".json") }}</label><br><br>
-    <label>{{ form.import_menu }} {{ form.import_menu.label }}</label><br>
-    <label>{{ form.import_users }} {{ form.import_users.label }}</label><br>
-    <label>{{ form.import_tables }} {{ form.import_tables.label }}</label><br><br>
-    {{ form.submit(class="btn") }}
-</form>
+<style>
+.import-export-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 1rem;
+}
+.action-card {
+    background: var(--black-40);
+    border-radius: 28px;
+    padding: 1.5rem;
+    flex: 1;
+    min-width: 250px;
+}
+.action-card h3 {
+    font-family: var(--font-heading);
+    margin-bottom: 1rem;
+}
+.file-input {
+    display: block;
+    margin: 1rem 0;
+    background: var(--beige-light);
+    padding: 6px;
+    border-radius: 30px;
+}
+.btn-secondary {
+    background: var(--beige-light);
+    color: var(--brown-dark);
+    padding: 6px 18px;
+    border-radius: 30px;
+    text-decoration: none;
+    display: inline-block;
+}
+</style>
 {% endblock %}

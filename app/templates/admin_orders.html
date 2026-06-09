@@ -1,25 +1,21 @@
 {% extends "admin_base.html" %}
 {% block admin_content %}
 <h2>Все заказы</h2>
-<table>
-    <tr><th>ID</th><th>Пользователь</th><th>Тип</th><th>Статус</th><th>Сумма</th><th>Дата</th><th>Действия</th></tr>
+<table class="admin-table">
+    <thead><tr><th>ID</th><th>Пользователь</th><th>Тип</th><th>Статус</th><th>Сумма</th><th>Дата</th><th></th></tr></thead>
+    <tbody>
     {% for order in orders %}
     <tr>
         <td>{{ order.id }}</td>
         <td>{{ order.first_name }} {{ order.last_name }}</td>
         <td>{{ order.order_type }}</td>
-        <td>
-            {% if order.status == 'created' %}Создан
-            {% elif order.status == 'paid' %}Оплачен
-            {% elif order.status == 'in_progress' %}В работе
-            {% elif order.status == 'completed' %}Завершён
-            {% elif order.status == 'cancelled' %}Отменён
-            {% else %}{{ order.status }}{% endif %}
-        </td>
+        <td><span class="status-badge status-{{ order.status }}">{{ order.status }}</span></td>
         <td>{{ order.total_price }} ₽</td>
         <td>{{ order.created_at }}</td>
-        <td><a href="{{ url_for('admin_order_detail', order_id=order.id) }}">Детали</a></td>
+        <td><a href="{{ url_for('admin_order_detail', order_id=order.id) }}" class="btn-small">Детали</a></td>
     </tr>
     {% endfor %}
+    </tbody>
 </table>
+<style>/* стили как в admin_order_detail */</style>
 {% endblock %}

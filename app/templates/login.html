@@ -1,33 +1,42 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Вход</h2>
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <ul class="flash-messages">
-      {% for cat, msg in messages %}
-        <li class="flash-{{ cat }}">{{ msg }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
-<form method="post">
-    {{ form.hidden_tag() }}
-    <div>
-        {{ form.phone.label }}<br>
-        {{ form.phone(placeholder="Телефон") }}<br>
-        {% for error in form.phone.errors %}
-            <span class="error">{{ error }}</span>
-        {% endfor %}
-    </div>
-    <div>
-        {{ form.password.label }}<br>
-        {{ form.password(placeholder="Пароль") }}<br>
-        {% for error in form.password.errors %}
-            <span class="error">{{ error }}</span>
-        {% endfor %}
-    </div>
-    <div>{{ form.submit(class="btn") }}</div>
-</form>
-<p><a href="{{ url_for('forgot_password') }}">Забыли пароль?</a></p>
-<p>Нет аккаунта? <a href="{{ url_for('register') }}">Зарегистрироваться</a></p>
+<div class="auth-container">
+    <h2>Вход</h2>
+    <form method="post" class="auth-form">
+        {{ form.hidden_tag() }}
+        <div class="form-group">{{ form.phone.label }} {{ form.phone(class="form-control", placeholder="Телефон") }}</div>
+        <div class="form-group">{{ form.password.label }} {{ form.password(class="form-control", placeholder="Пароль") }}</div>
+        {{ form.submit(class="btn-primary") }}
+    </form>
+    <p><a href="{{ url_for('forgot_password') }}">Забыли пароль?</a></p>
+    <p>Нет аккаунта? <a href="{{ url_for('register') }}">Зарегистрироваться</a></p>
+</div>
+<style>
+.auth-container {
+    max-width: 400px;
+    margin: 0 auto;
+    background: var(--black-40);
+    border-radius: 32px;
+    padding: 2rem;
+}
+.auth-form .form-group {
+    margin-bottom: 1rem;
+}
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border-radius: 30px;
+    border: none;
+    background: var(--beige-light);
+}
+.btn-primary {
+    width: 100%;
+    background: var(--accent);
+    padding: 10px;
+    border-radius: 40px;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+</style>
 {% endblock %}

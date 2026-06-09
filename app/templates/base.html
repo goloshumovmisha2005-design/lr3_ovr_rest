@@ -1,10 +1,10 @@
-<!-- base.html -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>{{ title or 'Мяско' }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/font.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     {% if request.path.startswith('/admin') %}
     <link rel="stylesheet" href="{{ url_for('static', filename='admin_style.css') }}">
@@ -12,43 +12,81 @@
     <script>const csrfToken = '{{ csrf_token_value }}';</script>
 </head>
 <body>
-    <div id="confirm-modal" class="modal">
-      <div class="modal-content">
-        <span class="close">&times;</span>
-        <p id="modal-message"></p>
-        <div class="modal-actions">
-          <button id="modal-cancel">Отмена</button>
-          <form id="modal-form" method="POST">
-            <button type="submit" id="modal-confirm">Подтвердить</button>
-          </form>
+    <!-- Боковое меню (сайдбар) -->
+    <div id="side-menu" class="side-menu">
+        <div class="side-menu-header">
+            <span>Меню</span>
+            <button class="close-menu" id="close-menu-btn">&times;</button>
         </div>
-      </div>
-    </div>
-
-    <header>
-        <div class="logo">
-            <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Мяско" height="40"></a>
-        </div>
-        <nav class="top-menu">
-            <a href="{{ url_for('menu') }}">Меню</a>
-            <a href="{{ url_for('reservation') }}">Бронь стола</a>
-            <a href="{{ url_for('cart') }}">Корзина</a>
+        <ul class="side-menu-list">
+            <li><a href="{{ url_for('index') }}"> Главная</a></li>
+            <li><a href="{{ url_for('menu') }}"> Меню</a></li>
+            <li><a href="{{ url_for('reservation') }}"> Бронирование</a></li>
+            <li><a href="{{ url_for('cart') }}"> Корзина</a></li>
             {% if current_user.is_authenticated %}
-                <div class="dropdown">
-                    <button class="dropbtn">{{ current_user.first_name }}</button>
-                    <div class="dropdown-content">
-                        <a href="{{ url_for('profile') }}">Личный кабинет</a>
-                        {% if current_user.role in ('admin','manager','hostess') %}
-                            <a href="{{ url_for('admin_dashboard') }}">Панель управления</a>
-                        {% endif %}
-                        <a href="{{ url_for('logout') }}">Выйти</a>
-                    </div>
-                </div>
+                <li><a href="{{ url_for('profile') }}"> Личный кабинет</a></li>
+
+                <!-- Административные ссылки (в зависимости от роли) -->
+                {% if current_user.role in ('admin', 'manager', 'hostess') %}
+                    <li class="menu-divider">───────── Администрирование ─────────</li>
+                    {% if current_user.role == 'admin' %}
+                        <li><a href="{{ url_for('admin_dashboard') }}">📊 Дашборд</a></li>
+                        <li><a href="{{ url_for('admin_users') }}">👥 Пользователи</a></li>
+                        <li><a href="{{ url_for('admin_menu') }}">🍽️ Меню</a></li>
+                        <li><a href="{{ url_for('admin_orders') }}">📦 Заказы</a></li>
+                        <li><a href="{{ url_for('admin_tables') }}">🪑 Столы</a></li>
+                        <li><a href="{{ url_for('admin_reservations') }}">📅 Брони</a></li>
+                        <li><a href="{{ url_for('admin_database') }}">🗄️ База данных</a></li>
+                        <li><a href="{{ url_for('admin_floor_plan') }}">🏗️ Конструктор зала</a></li>
+                        <li><a href="{{ url_for('import_data') }}">📤 Импорт данных</a></li>
+                        <li><a href="{{ url_for('export_database') }}">💾 Экспорт БД</a></li>
+                    {% elif current_user.role == 'manager' %}
+                        <li><a href="{{ url_for('admin_dashboard') }}">📊 Дашборд</a></li>
+                        <li><a href="{{ url_for('admin_menu') }}">🍽️ Меню</a></li>
+                        <li><a href="{{ url_for('admin_orders') }}">📦 Заказы</a></li>
+                        <li><a href="{{ url_for('admin_tables') }}">🪑 Столы</a></li>
+                    {% elif current_user.role == 'hostess' %}
+                        <li><a href="{{ url_for('admin_dashboard') }}">📊 Дашборд</a></li>
+                        <li><a href="{{ url_for('admin_reservations') }}">📅 Брони</a></li>
+                    {% endif %}
+                {% endif %}
+
+                <li><a href="{{ url_for('logout') }}"> Выйти</a></li>
             {% else %}
-                <a href="{{ url_for('login') }}">Войти</a>
+                <li><a href="{{ url_for('login') }}"> Войти</a></li>
+                <li><a href="{{ url_for('register') }}"> Регистрация</a></li>
             {% endif %}
-        </nav>
+        </ul>
+    </div>
+    <div id="menu-overlay" class="menu-overlay"></div>
+    <div class="menu-toggle" id="menu-toggle-btn">☰</div>
+
+    <!-- Единая шапка -->
+    <header class="site-header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="{{ url_for('index') }}">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Мяско" height="40">
+                </a>
+            </div>
+            <div class="header-info">
+                <div class="restaurant-name">Ресторан "Мяско"</div>
+                <div class="restaurant-address">Москва, улица Покровка, дом 17 &nbsp;|&nbsp; +7 (495) 819-32-54</div>
+            </div>
+            <div class="header-actions">
+                <a href="{{ url_for('cart') }}" class="header-icon cart-icon" title="Корзина"></a>
+                <!-- Иконка профиля (кликабельна) -->
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('profile') }}" class="header-icon profile-icon" title="Личный кабинет"></a>
+                    <a href="{{ url_for('profile') }}" class="user-name">{{ current_user.first_name }}</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="header-icon profile-icon" title="Войти"></a>
+                {% endif %}
+            </div>
+        </div>
     </header>
+
+    <!-- Основной контент -->
     <main>
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
@@ -62,80 +100,96 @@
         {% block content %}{% endblock %}
     </main>
 
+    <!-- Модальное окно подтверждения -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id="modal-message"></p>
+            <div class="modal-actions">
+                <button id="modal-cancel">Отмена</button>
+                <form id="modal-form" method="POST">
+                    <button type="submit" id="modal-confirm">Подтвердить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
-    const modal = document.getElementById('confirm-modal');
-    const closeBtn = modal.querySelector('.close');
-    const cancelBtn = document.getElementById('modal-cancel');
-    const confirmForm = document.getElementById('modal-form');
-    const modalMessage = document.getElementById('modal-message');
+        // Боковое меню
+        const menuToggle = document.getElementById('menu-toggle-btn');
+        const sideMenu = document.getElementById('side-menu');
+        const overlay = document.getElementById('menu-overlay');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
 
-    function openModal(message, url, method = 'POST', extraFields = null) {
-        modalMessage.textContent = message;
-        confirmForm.action = url;
-        confirmForm.method = method;
-        // Удаляем временные поля
-        confirmForm.querySelectorAll('.temp-field').forEach(el => el.remove());
-        // Добавляем CSRF-токен
-        let csrfInput = confirmForm.querySelector('input[name="csrf_token"]');
-        if (!csrfInput) {
-            csrfInput = document.createElement('input');
-            csrfInput.type = 'hidden';
-            csrfInput.name = 'csrf_token';
-            csrfInput.value = csrfToken;
-            confirmForm.appendChild(csrfInput);
-        } else {
-            csrfInput.value = csrfToken;
+        function openMenu() {
+            sideMenu.classList.add('open');
+            overlay.classList.add('active');
         }
-        if (extraFields) {
-            for (const [name, value] of Object.entries(extraFields)) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = name;
-                input.value = value;
-                input.classList.add('temp-field');
-                confirmForm.appendChild(input);
-            }
+        function closeMenu() {
+            sideMenu.classList.remove('open');
+            overlay.classList.remove('active');
         }
-        modal.style.display = 'block';
-    }
+        if (menuToggle) menuToggle.addEventListener('click', openMenu);
+        if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
 
-    function closeModal() {
-        modal.style.display = 'none';
-    }
-
-    closeBtn.onclick = closeModal;
-    cancelBtn.onclick = closeModal;
-    window.onclick = function(event) {
-        if (event.target == modal) closeModal();
-    };
-
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.confirm-action').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                const message = this.dataset.message || 'Вы уверены?';
-                const url = this.dataset.url;
-                const method = this.dataset.method || 'POST';
-                let extraFields = {};
-
-                if (this.dataset.remove) {
-                    extraFields['remove_item'] = this.dataset.remove;
+        // Модальное окно подтверждения
+        const modal = document.getElementById('confirm-modal');
+        if (modal) {
+            const closeBtn = modal.querySelector('.close');
+            const cancelBtn = document.getElementById('modal-cancel');
+            const confirmForm = document.getElementById('modal-form');
+            const modalMessage = document.getElementById('modal-message');
+            function openModal(message, url, method = 'POST', extraFields = null) {
+                modalMessage.textContent = message;
+                confirmForm.action = url;
+                confirmForm.method = method;
+                confirmForm.querySelectorAll('.temp-field').forEach(el => el.remove());
+                let csrfInput = confirmForm.querySelector('input[name="csrf_token"]');
+                if (!csrfInput) {
+                    csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = 'csrf_token';
+                    csrfInput.value = csrfToken;
+                    confirmForm.appendChild(csrfInput);
+                } else {
+                    csrfInput.value = csrfToken;
                 }
-
-                const parentForm = this.closest('form');
-                if (parentForm && !this.dataset.ignoreForm) {
-                    const formData = new FormData(parentForm);
-                    for (const [key, value] of formData.entries()) {
-                        if (!extraFields.hasOwnProperty(key)) {
-                            extraFields[key] = value;
-                        }
+                if (extraFields) {
+                    for (const [name, value] of Object.entries(extraFields)) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = name;
+                        input.value = value;
+                        input.classList.add('temp-field');
+                        confirmForm.appendChild(input);
                     }
                 }
-
-                openModal(message, url, method, extraFields);
+                modal.style.display = 'flex';
+            }
+            function closeModal() { modal.style.display = 'none'; }
+            if (closeBtn) closeBtn.onclick = closeModal;
+            if (cancelBtn) cancelBtn.onclick = closeModal;
+            window.onclick = function(event) { if (event.target == modal) closeModal(); };
+            document.querySelectorAll('.confirm-action').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const message = this.dataset.message || 'Вы уверены?';
+                    const url = this.dataset.url;
+                    const method = this.dataset.method || 'POST';
+                    let extraFields = {};
+                    if (this.dataset.remove) extraFields['remove_item'] = this.dataset.remove;
+                    const parentForm = this.closest('form');
+                    if (parentForm && !this.dataset.ignoreForm) {
+                        const formData = new FormData(parentForm);
+                        for (const [key, value] of formData.entries()) {
+                            if (!extraFields.hasOwnProperty(key)) extraFields[key] = value;
+                        }
+                    }
+                    openModal(message, url, method, extraFields);
+                });
             });
-        });
-    });
+        }
     </script>
 </body>
 </html>

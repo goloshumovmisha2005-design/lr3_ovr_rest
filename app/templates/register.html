@@ -1,22 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Регистрация</h2>
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <ul class="flash-messages">
-      {% for cat, msg in messages %}
-        <li class="flash-{{ cat }}">{{ msg }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
-<form method="post">
-    {{ form.hidden_tag() }}
-    {{ form.first_name(placeholder="Имя") }}<br>
-    {{ form.last_name(placeholder="Фамилия") }}<br>
-    {{ form.phone(placeholder="Телефон") }}<br>
-    {{ form.email(placeholder="Email") }}<br>
-    {{ form.password(placeholder="Пароль") }}<br>
-    {{ form.submit(class="btn") }}
-</form>
+<div class="auth-container">
+    <h2>Регистрация</h2>
+    <form method="post" class="auth-form">
+        {{ form.hidden_tag() }}
+        {{ form.first_name(class="form-control", placeholder="Имя") }}
+        {{ form.last_name(class="form-control", placeholder="Фамилия") }}
+        {{ form.phone(class="form-control", placeholder="Телефон") }}
+        {{ form.email(class="form-control", placeholder="Email") }}
+        {{ form.password(class="form-control", placeholder="Пароль") }}
+        {{ form.submit(class="btn-primary") }}
+    </form>
+    <p>Уже есть аккаунт? <a href="{{ url_for('login') }}">Войти</a></p>
+</div>
+<!-- стили как в login -->
 {% endblock %}

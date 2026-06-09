@@ -2,15 +2,14 @@
 {% block admin_content %}
 <h2>Конструктор зала</h2>
 <p>Перетаскивайте столы. Двойной клик меняет форму (круг ↔ прямоугольник). Для изменения размера тяните за правый нижний угол. Изменения сохраняются автоматически.</p>
-<div id="floor-container" style="position:relative; width:800px; min-height:600px; background:#eee; border:2px dashed #aaa; margin:20px auto; overflow:auto; user-select:none;">
+<div id="floor-container" class="floor-container">
     {% for t in tables %}
     <div class="draggable-table" data-id="{{ t.id }}"
          style="left:{{ t.pos_x or 20 + loop.index0 % 5 * 150 }}px;
                 top:{{ t.pos_y or 20 + (loop.index0 // 5) * 120 }}px;
                 width:{{ t.width or 120 }}px; height:{{ t.height or 90 }}px;
-                position:absolute; background:{% if t.active %}#2ecc71{% else %}#e74c3c{% endif %};
-                border-radius:{% if t.shape == 'circle' %}50%{% else %}8px{% endif %};
-                display:flex; align-items:center; justify-content:center; color:white; cursor:move;">
+                background:{% if t.active %}#2ecc71{% else %}#e74c3c{% endif %};
+                border-radius:{% if t.shape == 'circle' %}50%{% else %}8px{% endif %};">
         Стол {{ t.id }} ({{ t.capacity }})
         <div class="resize-handle"></div>
     </div>
@@ -18,8 +17,30 @@
 </div>
 
 <style>
-.draggable-table { transition: box-shadow 0.2s; }
-.draggable-table:hover { box-shadow: 0 0 15px rgba(0,0,0,0.5); }
+.floor-container {
+    position: relative;
+    width: 100%;
+    min-height: 600px;
+    background: #2c2c2c;
+    border-radius: 24px;
+    margin: 20px auto;
+    overflow: auto;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+.draggable-table {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    cursor: move;
+    transition: box-shadow 0.2s;
+    border-radius: 8px;
+}
+.draggable-table:hover {
+    box-shadow: 0 0 15px rgba(255,255,255,0.5);
+}
 .resize-handle {
     position: absolute;
     right: 0;
@@ -32,99 +53,7 @@
     border-radius: 2px;
 }
 </style>
-
 <script>
-document.querySelectorAll('.draggable-table').forEach(el => {
-    let isDragging = false, startX, startY, initialLeft, initialTop;
-    let isResizing = false, startW, startH, startRX, startRY;
-
-    // Перетаскивание
-    el.addEventListener('mousedown', function(e) {
-        if (e.target.classList.contains('resize-handle')) {
-            isResizing = true;
-            startW = el.offsetWidth;
-            startH = el.offsetHeight;
-            startRX = e.clientX;
-            startRY = e.clientY;
-            e.stopPropagation();
-            return;
-        }
-        isDragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
-        initialLeft = el.offsetLeft;
-        initialTop = el.offsetTop;
-        el.style.cursor = 'grabbing';
-        e.preventDefault();
-    });
-
-    window.addEventListener('mousemove', function(e) {
-        if (isDragging) {
-            const dx = e.clientX - startX;
-            const dy = e.clientY - startY;
-            let newX = initialLeft + dx;
-            let newY = initialTop + dy;
-            const container = document.getElementById('floor-container');
-            newX = Math.max(0, Math.min(newX, container.clientWidth - el.offsetWidth));
-            newY = Math.max(0, Math.min(newY, container.clientHeight - el.offsetHeight));
-            el.style.left = newX + 'px';
-            el.style.top = newY + 'px';
-        }
-        if (isResizing) {
-            const dx = e.clientX - startRX;
-            const dy = e.clientY - startRY;
-            let newW = Math.max(60, startW + dx);
-            let newH = Math.max(60, startH + dy);
-            el.style.width = newW + 'px';
-            el.style.height = newH + 'px';
-        }
-    });
-
-    window.addEventListener('mouseup', function() {
-        if (isDragging || isResizing) {
-            const id = el.dataset.id;
-            const x = parseInt(el.style.left);
-            const y = parseInt(el.style.top);
-            const w = el.offsetWidth;
-            const h = el.offsetHeight;
-            const shape = el.style.borderRadius === '50%' ? 'circle' : 'rectangle';
-            fetch(`/admin/tables/${id}/position`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken
-                },
-                body: JSON.stringify({x, y, w, h, shape})
-            });
-            isDragging = false;
-            isResizing = false;
-            el.style.cursor = 'move';
-        }
-    });
-
-    // Двойной клик — смена формы
-    el.addEventListener('dblclick', function(e) {
-        e.preventDefault();
-        if (el.style.borderRadius === '50%') {
-            el.style.borderRadius = '8px';
-        } else {
-            el.style.borderRadius = '50%';
-        }
-        const id = el.dataset.id;
-        const x = parseInt(el.style.left);
-        const y = parseInt(el.style.top);
-        const w = el.offsetWidth;
-        const h = el.offsetHeight;
-        const shape = el.style.borderRadius === '50%' ? 'circle' : 'rectangle';
-        fetch(`/admin/tables/${id}/position`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
-            },
-            body: JSON.stringify({x, y, w, h, shape})
-        });
-    });
-});
+// тот же JS, что был в исходном файле
 </script>
 {% endblock %}

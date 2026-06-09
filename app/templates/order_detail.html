@@ -1,26 +1,42 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Заказ №{{ order.id }}</h2>
-<p>Статус:
-    {% if order.status == 'created' %}Создан
-    {% elif order.status == 'paid' %}Оплачен
-    {% elif order.status == 'in_progress' %}В работе
-    {% elif order.status == 'completed' %}Завершён
-    {% elif order.status == 'cancelled' %}Отменён
-    {% else %}{{ order.status }}{% endif %}
-</p>
-<p>Сумма: {{ order.total_price }} ₽</p>
-{% if order.bonus_used %} <p>Оплачено бонусами: {{ order.bonus_used }} ₽</p> {% endif %}
-<p>Способ оплаты: {% if order.payment_method == 'card' %}Карта{% elif order.payment_method == 'sbp' %}СБП{% else %}{{ order.payment_method }}{% endif %}</p>
-<ul>
-{% for item in items %}
-    <li style="display:flex; align-items:center; gap:10px;">
-        {% if item.image %}
-            <img src="{{ url_for('static', filename=item.image) if not item.image.startswith('http') else item.image }}" width="50" height="50" style="object-fit:cover; border-radius:5px;">
-        {% endif %}
-        {{ item.name }} x {{ item.quantity }} = {{ item.price * item.quantity }} ₽
-    </li>
-{% endfor %}
-</ul>
-<a href="{{ url_for('profile') }}">К моим заказам</a>
+<div class="order-detail-container">
+    <h2>Заказ №{{ order.id }}</h2>
+    <div class="order-info">
+        <p>Статус: <span class="status-badge status-{{ order.status }}">{{ order.status }}</span></p>
+        <p>Сумма: {{ order.total_price }} ₽</p>
+        {% if order.bonus_used %}<p>Оплачено бонусами: {{ order.bonus_used }} ₽</p>{% endif %}
+        <p>Способ оплаты: {{ order.payment_method }}</p>
+    </div>
+    <ul class="order-items">
+        {% for item in items %}
+        <li>
+            {% if item.image %}<img src="{{ url_for('static', filename=item.image) if not item.image.startswith('http') else item.image }}" width="50">{% endif %}
+            {{ item.name }} × {{ item.quantity }} = {{ item.price * item.quantity }} ₽
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('profile') }}" class="btn-secondary">К моим заказам</a>
+</div>
+<style>
+.order-detail-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--black-40);
+    border-radius: 32px;
+    padding: 2rem;
+}
+.order-info {
+    margin-bottom: 2rem;
+}
+.order-items li {
+    background: rgba(0,0,0,0.3);
+    border-radius: 20px;
+    padding: 0.8rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+</style>
 {% endblock %}
