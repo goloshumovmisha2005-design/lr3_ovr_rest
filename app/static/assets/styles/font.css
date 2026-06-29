@@ -1,0 +1,15 @@
+@font-face {
+                font-family: "Volkhov-Bold Italic"; font-style: normal; src: url('@/assets/fonts/Volkhov-BoldItalic_1.ttf'); font-weight: 700
+            }
+@font-face {
+                font-family: "Anek Devanagari-Regular"; font-style: normal; src: url('@/assets/fonts/AnekDevanagari_wdth_wght__1.ttf')
+            }
+@font-face {
+                font-family: "Volkhov-Italic"; font-style: italic; src: url('@/assets/fonts/Volkhov-Italic_1.ttf'); font-weight: 400
+            }
+@font-face {
+                font-family: "Inter-Regular"; font-style: normal; src: url('@/assets/fonts/Inter_1.ttf')
+            }
+@font-face {
+                font-family: "Vollkorn-Bold"; font-style: normal; src: url('@/assets/fonts/Vollkorn_wght__2.ttf')
+            }
